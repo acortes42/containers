@@ -12,6 +12,8 @@
 #include "stack.hpp"
 #include "vector.hpp"
 #include "iterators/reverseIterator.hpp"
+#include "iterators/iterator.hpp"
+#include "iterators/utilityFunctions.hpp"
 #include <stdexcept>      // std::length_error
 
 

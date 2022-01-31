@@ -1,54 +1,72 @@
 #ifndef ITERATOR_HPP
 #define ITERATOR_HPP
 
-
 namespace ft
 {
-template<typename T>
-class Iterator
-{
+    // ft::iterator
 
-public:
-
-    Iterator(T* ptr = nullptr){m_ptr = ptr;}
-    Iterator(const Iterator<T>& rawIterator);
-    ~Iterator(){}
-
-    Iterator<T>&                  operator=(const Iterator<T>& rawIterator);
-    Iterator<T>&                  operator=(T* ptr){m_ptr = ptr;return (*this);}
-
-    operator                                    bool()const
+    template <class Category, class T, class Distance = ptrdiff_t,
+          class Pointer = T*, class Reference = T&>
+    struct iterator 
     {
-        if(m_ptr)
-            return true;
-        else
-            return false;
-    }
+        typedef T         value_type;
+        typedef Distance  difference_type;
+        typedef Pointer   pointer;
+        typedef Reference reference;
+        typedef Category  iterator_category;
+    };
 
-    bool                                        operator==(const Iterator<T>& rawIterator)const{return (m_ptr == rawIterator.getConstPtr());}
-    bool                                        operator!=(const Iterator<T>& rawIterator)const{return (m_ptr != rawIterator.getConstPtr());}
+    // input_iterator_tag
 
-    Iterator<T>&                  operator+=(const std::ptrdiff_t& movement){m_ptr += movement;return (*this);}
-    Iterator<T>&                  operator-=(const std::ptrdiff_t& movement){m_ptr -= movement;return (*this);}
-    Iterator<T>&                  operator++(){++m_ptr;return (*this);}
-    Iterator<T>&                  operator--(){--m_ptr;return (*this);}
-    Iterator<T>                   operator++(int){T temp(*this);++m_ptr;return temp;}
-    Iterator<T>                   operator--(int){T temp(*this);--m_ptr;return temp;}
-    Iterator<T>                   operator+(const std::ptrdiff_t& movement){T oldPtr = m_ptr;m_ptr+=movement;T temp(*this);m_ptr = oldPtr;return temp;}
-    Iterator<T>                   operator-(const std::ptrdiff_t& movement){T oldPtr = m_ptr;m_ptr-=movement;T temp(*this);m_ptr = oldPtr;return temp;}
+    struct input_iterator_tag { };
 
-    std::ptrdiff_t                             operator-(const Iterator<T>& rawIterator){return std::distance(rawIterator.getPtr(),this->getPtr());}
+    // output_iterator_tag
 
-    T&                                 operator*(){return *m_ptr;}
-    const T&                           operator*()const{return *m_ptr;}
-    T*                                 operator->(){return m_ptr;}
+    struct output_iterator_tag { };
 
-    T*                                 getPtr()const{return m_ptr;}
-    const T*                           getConstPtr()const{return m_ptr;}
+    // forward_iterator_tag
 
-protected:
+    struct forward_iterator_tag : public input_iterator_tag { };
 
-    T*                                 m_ptr;
-};
+    // bidirectional_iterator_tag
+
+    struct bidirectional_iterator_tag : public forward_iterator_tag { };
+
+    // random_access_iterator_tag
+    
+    struct random_access_iterator_tag : public bidirectional_iterator_tag { };
+
+    //iteration_traits
+
+    template <class Iterator> 
+    class iterator_traits
+    {
+        typedef typename Iterator::difference_type difference_type;
+        typedef typename Iterator::value_type value_type;
+        typedef typename Iterator::pointer pointer;
+        typedef typename Iterator::reference reference;
+        typedef typename Iterator::iterator_category iterator_category;
+    };
+
+    template< class T >
+    struct iterator_traits<T*>
+    {
+        typedef ptrdiff_t difference_type;
+        typedef T value_type;
+        typedef T* pointer;
+        typedef T& reference;
+        typedef random_access_iterator_tag iterator_category;
+    };
+
+    template< class T >
+    struct iterator_traits<const T*>
+    {
+        typedef ptrdiff_t difference_type;
+        typedef const T value_type;
+        typedef const T* pointer;
+        typedef const T& reference;
+        typedef random_access_iterator_tag iterator_category;
+    };
+    
 }
 #endif

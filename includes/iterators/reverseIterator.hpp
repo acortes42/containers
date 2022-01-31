@@ -5,32 +5,107 @@
 
 namespace ft
 {
-template<typename T>
-class ReverseIterator : public Iterator<T>
-{
-	public:
+    template <class Iterator> 
+    class reverse_iterator
+    {
+        public:
 
-    ReverseIterator(T* ptr = nullptr):Iterator<T>(ptr){}
-    ReverseIterator(const Iterator<T>& rawIterator){this->m_ptr = rawIterator.getPtr();}
-    ReverseIterator(const ReverseIterator<T>& rawReverseIterator);
-    ~ReverseIterator(){}
+            typedef Iterator iterator_type;
+            typedef typename iterator_traits<Iterator>::iterator_category iterator_category;
+            typedef typename iterator_traits<Iterator>::value_type value_type;
+            typedef typename iterator_traits<Iterator>::difference_type difference_type;
+            typedef typename iterator_traits<Iterator>::pointer pointer;
+            typedef typename iterator_traits<Iterator>::reference reference;
 
-    ReverseIterator<T>&           operator=(const ReverseIterator<T>& rawReverseIterator);
-    ReverseIterator<T>&           operator=(const Iterator<T>& rawIterator){this->m_ptr = rawIterator.getPtr();return (*this);}
-    ReverseIterator<T>&           operator=(T* ptr){this->setPtr(ptr);return (*this);}
+            reverse_iterator()
+            { 
+                _iter();
+            };
 
-    ReverseIterator<T>&           operator+=(const std::ptrdiff_t& movement){this->m_ptr -= movement;return (*this);}
-    ReverseIterator<T>&           operator-=(const std::ptrdiff_t& movement){this->m_ptr += movement;return (*this);}
-    ReverseIterator<T>&           operator++(){--this->m_ptr;return (*this);}
-    ReverseIterator<T>&           operator--(){++this->m_ptr;return (*this);}
-    ReverseIterator<T>            operator++(int){T temp(*this);--this->m_ptr;return temp;}
-    ReverseIterator<T>            operator--(int){T temp(*this);++this->m_ptr;return temp;}
-    ReverseIterator<T>            operator+(const int& movement){T oldPtr = this->m_ptr;this->m_ptr-=movement;T temp(*this);this->m_ptr = oldPtr;return temp;}
-    ReverseIterator<T>            operator-(const int& movement){T oldPtr = this->m_ptr;this->m_ptr+=movement;T temp(*this);this->m_ptr = oldPtr;return temp;}
+            explicit reverse_iterator( iterator_type x )
+            {
+                _iter(x);
+            };
 
-    std::ptrdiff_t                             operator-(const ReverseIterator<T>& rawReverseIterator){return std::distance(this->getPtr(),rawReverseIterator.getPtr());}
+            template< class U >reverse_iterator( const reverse_iterator<U>& other ) 
+            {
+                _iter(other.base());
+            };
 
-    Iterator<T>                   base(){Iterator<T> forwardIterator(this->m_ptr); ++forwardIterator; return forwardIterator;}
-};
+            iterator_type base() const
+            {
+                return(_iter);
+            };
+
+            reference operator*() const
+            {
+                iterator_type x= _iter.base();
+                return (*(--x)); 
+            };
+
+            reverse_iterator operator+ (difference_type n) const
+            {
+                return (reverse_iterator(_iter.base() - n));
+            };
+
+            reverse_iterator& operator++()
+            {
+                *this--;
+                return(*this);
+            };
+                        
+            reverse_iterator& operator++(int)
+            {
+                reverse_iterator tmp = *this;
+                --(*this);
+                return (*tmp);
+            };
+            
+            reverse_iterator& operator+= (difference_type n)
+            {
+                _iter -= n;
+                return(*this);
+            }
+
+            reverse_iterator operator- (difference_type n) const
+            {
+                return (reverse_iterator(_iter.base() + n));
+            };
+
+            reverse_iterator& operator--()
+            {
+                *this++;
+                return(*this);
+            };
+
+            reverse_iterator& operator--(int)
+            {
+                reverse_iterator tmp = *this;
+                ++(*this);
+                return (*tmp);
+            };
+
+            reverse_iterator& operator-= (difference_type n)
+            {
+                _iter += n;
+                return(*this);
+            }
+
+            pointer operator->() const
+            {
+                return &(operator*());
+            }
+            
+            reference operator[] (difference_type n) const
+            {
+                return(this->base()[-n-1]);
+            }
+
+            // relational operators (reverse_iterator)
+
+        private:
+
+            iterator_type _iter;
+    };
 }
 #endif

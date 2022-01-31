@@ -1,13 +1,41 @@
 #ifndef VECTOR_HPP
 #define VECTOR_HPP
 
-#include "iterators/reverseIterator.hpp"
+#include "containers.hpp"
 
 namespace ft
 {
-	template< typename T > 
+	template < class T, class Alloc = std::allocator<T> >
 	class vector
 	{
+
+			typedef T                                           value_type;
+
+			typedef Alloc                                       allocator_type;
+
+			typedef typename allocator_type::reference          reference;
+
+			typedef typename allocator_type::const_reference    const_reference;
+
+			typedef typename allocator_type::pointer            pointer;
+
+			typedef typename allocator_type::const_pointer      const_pointer;
+
+			// hay que cambiar estos std por ft en cuanto implemente el random_iterator
+
+			typedef ft::random_access_iterator<value_type>      iterator;
+
+			typedef ft::random_access_iterator<const value_type>  const_iterator;
+			
+			typedef ft::reverse_iterator<iterator>             reverse_iterator;
+
+			typedef ft::reverse_iterator<const_iterator>       const_reverse_iterator;
+
+			typedef typename ft::iterator_traits<iterator>::difference_type    difference_type; 
+
+			typedef typename allocator_type::size_type          size_type;
+
+
 		private:
 
 			T					*v_data;
@@ -17,27 +45,6 @@ namespace ft
 
 		public:
 
-			typedef typename std::allocator<T>::reference		reference;
-		    typedef typename std::allocator<T>::const_reference	const_reference;
-
-			typedef Iterator<T>              iterator;
-    		typedef Iterator<const T>        const_iterator;
-
-    		typedef ReverseIterator<T>       reverse_iterator;
-    		typedef ReverseIterator<const T> const_reverse_iterator;
-
-			iterator                                       begin(){return iterator(&v_data[0]);}
-    		iterator                                       end(){return iterator(&v_data[last_elem]);}
-    		
-			const_iterator                                 cbegin(){return const_iterator(&v_data[0]);}
-    		const_iterator                                 cend(){return const_iterator(&v_data[last_elem]);}
-
-    		reverse_iterator                               rbegin(){return reverse_iterator(&v_data[last_elem - 1]);}
-    		reverse_iterator                               rend(){return reverse_iterator(&v_data[-1]);}
-
-    		const_reverse_iterator                         crbegin(){return const_reverse_iterator(&v_data[last_elem - 1]);}
-    		const_reverse_iterator                         crend(){return const_reverse_iterator(&v_data[-1]);}
-			
 			vector<T>()
 			{
 				this->v_data = this->alloc.allocate(1);
