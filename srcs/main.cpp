@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: adrian <adrian@student.42.fr>              +#+  +:+       +#+        */
+/*   By: acortes- <acortes	-@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/26 21:23:27 by adrian            #+#    #+#             */
-/*   Updated: 2021/09/30 10:24:53 by adrian           ###   ########.fr       */
+/*   Updated: 2022/02/01 13:46:56 by acortes-         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,27 @@
 
 int main()
 {
-	ft::vector<int>	first(5, 50);
+	//ft::vector<int>	first(1, 2);
 	ft::vector<int> second;
 	ft::vector<int> empty;
 	std::vector<int>real;
-	int				*data;
+	int x;
+	//int				*data;
+
+	second.empty() == true?std::cout << "vacio" << std::endl: std::cout << "lleno" << std::endl;
 
 	real.push_back(5);
-	second.push_back(800);
-	second.push_back(15);
-	second.push_back(-900);
-	first.push_back(10);
-	second.resize(6, -50);
+	second.push_back(1);
+	second.push_back(2);
+	second.push_back(3);
+	second.push_back(4);
+	second.push_back(5);
+
+	second.empty() == true?std::cout << "vacio" << std::endl: std::cout << "lleno" << std::endl;
+
+	//first.push_back(10);
+	second.resize(7, -50);
+	/*
 	std::cout << "aqui llega:  " << second.back() << std::endl;
 	first.front() -= second.back();
 	std::cout << "aqui llega: " << std::endl;
@@ -33,13 +42,20 @@ int main()
 	second[4] = 0;
 	data = second.data();
 	data[3] = second[3] - 100;
-	for(ft::vector<int>::iterator it = first.begin(); it != first.end(); ++it)
-	{ 
-    	std::cout << *it << "\n";
+	
+	*/
+	x = 0;
+	while(x < (int)second.size())
+	{
+		std::cout << second[x] << std::endl;
+		x++;
 	}
+
+	
 	std::cout << "este es size: " << second.size() << std::endl;
 	std::cout << "este es capacity: " << second.capacity() << std::endl;
 	std::cout << "este es el maz_size: " << second.max_size() << std::endl;
+	/*
 	std::cout << "este es el maz_size original: " << real.max_size() << std::endl;
 	std::cout << "este es el empty cuando no esta vacio: " << first.empty() << std::endl;
 	std::cout << "este es el empty cuando esta vacio: " << empty.empty() << std::endl;
@@ -56,6 +72,7 @@ int main()
 	{
 		std::cerr << "--> Ninguno. Caiste en un error" << std::endl;
 	}
+	*/
 	return (0);
 }
 

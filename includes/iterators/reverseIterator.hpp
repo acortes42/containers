@@ -1,8 +1,6 @@
 #ifndef REVERSEITERATOR_HPP
 #define REVERSEITERATOR_HPP
 
-#include "iterator.hpp"
-
 namespace ft
 {
     template <class Iterator> 
@@ -19,17 +17,17 @@ namespace ft
 
             reverse_iterator()
             { 
-                _iter();
+                _iter = nullptr;
             };
 
             explicit reverse_iterator( iterator_type x )
             {
-                _iter(x);
+                _iter = x;
             };
 
             template< class U >reverse_iterator( const reverse_iterator<U>& other ) 
             {
-                _iter(other.base());
+                _iter = other.base();
             };
 
             iterator_type base() const

@@ -6,7 +6,7 @@
 
 CC			=	 clang++
 
-CC_FLAGS	=	 -Wall -Wextra -Werror -std=c++98 -fsanitize=address
+CC_FLAGS	=	 -Wall -Wextra -Werror -std=c++98
 
 # DELETE #
 
