@@ -5,18 +5,6 @@
 
 namespace ft
 {
-	template<class InputIterator> typename ft::iterator_traits<InputIterator>::difference_type
-    distance (InputIterator first, InputIterator last)
-    {
-        typename ft::iterator_traits<InputIterator>::difference_type rtn = 0;
-        while (first != last)
-        {
-            first++;
-            rtn++;
-        }
-        return (rtn);
-    }
-
 	template < class T, class Alloc = std::allocator<T> >
 	class vector
 	{
@@ -67,7 +55,7 @@ namespace ft
 				firts_elem = u_nullptr;
 				last_elem = u_nullptr;
 				allocated_size = u_nullptr;
-				difference_type distance = ft::distance(first, last);
+				difference_type distance = distance(first, last);
 
 				firts_elem = alloc.allocate(distance);
 				last_elem = firts_elem;
@@ -107,6 +95,7 @@ namespace ft
 
 			~vector<T>()
 			{
+				this->clear();
         		alloc.deallocate(this->firts_elem, this->capacity());
 			};
 
@@ -131,6 +120,17 @@ namespace ft
 			size_type size(void) const
 			{
 				return (this->last_elem - this->firts_elem);
+			}
+
+			size_type distance (iterator first, iterator last)
+			{
+				size_type rtn = 0;
+				while (first != last)
+				{
+					first++;
+					rtn++;
+				}
+				return (rtn);
 			}
 
 			size_type max_size() const{ return ((size_t)(-1) / sizeof(this)); }
@@ -168,7 +168,7 @@ namespace ft
 				pointer old_last = last_elem;
 				pointer old_first = firts_elem;
 				size_type old_size = size();
-				size_type old_allocated_size = capacity();
+				size_type oldallocated_size = capacity();
 
 				firts_elem = alloc.allocate(n);
 				last_elem = firts_elem;
@@ -179,10 +179,12 @@ namespace ft
 					old_first++;
 					last_elem++;
 				}
-				alloc.deallocate(old_first - old_size, old_allocated_size);
+				alloc.deallocate(old_first - old_size, oldallocated_size);
 			}
 
 			// Element access
+			
+			//vector &operator=(const vector& x){}
 
 			reference operator[] (size_type n) { return (*(firts_elem + n)); }
 
@@ -202,19 +204,35 @@ namespace ft
 				return (*(this->firts_elem + n));
 			}
 
-			reference front() { return (*v_data);}
-			const_reference front() const { *v_data; }
-			reference back() { return (*(v_data + (size() - 1)));}
-			const_reference back() const { return (*(v_data + (size() - 1))); }
+			reference front() { return (*firts_elem);}
+			const_reference front() const {return (*firts_elem);}
+			reference back() { return (*last_elem);}
+			const_reference back() const { return (*last_elem); }
 
 			//Modifiers
 
+			// Problema al hacer el overload en assign
+
 			template <class InputIterator>
-			void assign (InputIterator first, InputIterator last)
+  			void assign (InputIterator first, InputIterator last)
 			{
-				
-			}
+				this->clear();
+				while(first != last)
+				{
+					alloc.construct(last_elem, first); 
+					last_elem++;
+					first++;
+				}
+			};
 			
+			void assign (size_type n, const value_type& val)
+			{
+				size_type i = 0;
+				this->clear();
+				while (i++ < n)
+					push_back(val);
+			}
+
 			void push_back(T value)
 			{
 				size_type n;
@@ -230,78 +248,191 @@ namespace ft
 				last_elem++;
 				
 			}
-		/*
-			
 
-			
-
-			T* data()
-			{
-				return (v_data);
-			}
-
-			void assign (unsigned int n, const T& val)
-			{
-				unsigned int x;
-
-				x = 0;
-				while (x++ < n)
-					this->push_back(val);
-			}
-
-			void assign (iterator first, iterator last)
-			{
-				for(iterator it = first.begin(); it != last.end(); ++it)
-					this->push_back(it);
-			}
-			
 			void pop_back()
 			{
-				T	*v_data_tmp;
-				unsigned int	x;
-
-				x = 0;
-				if (last_elem > 0)
-				{
-					v_data_tmp = this->alloc.allocate(this->allocated_size);
-					while (x < last_elem)
-					{
-						v_data_tmp[x] = this->v_data[x];
-						x++;
-					}
-					delete(v_data);
-					last_elem--;
-					this->v_data = this->alloc.allocate(allocated_size);
-					this->v_data = v_data_tmp;
-				}
+				alloc.destroy(&this->back());
+				last_elem--;
+				
 			}
-			
-			iterator insert (iterator position, const T& val)
-			{
-				T				*v_data_tmp;
-				unsigned int	x;
 
-				x = 0;
-				if (this->last_elem >= this->allocated_size)
+			iterator insert (iterator position, const value_type& val)
+			{
+				size_type pos_len = &(*position) - firts_elem;
+				pointer newfirts_elem = pointer();
+				pointer newlast_elem = pointer();
+				pointer newcapacity = pointer();
+
+				int next_capacity = 0;
+				if (size_type(allocated_size - last_elem) >= 1)
+					next_capacity = this->capacity();
+				else
+					next_capacity = (this->capacity() * 2 > 0) ? this->capacity() * 2 : 1; 
+				newfirts_elem = alloc.allocate( next_capacity );
+				newlast_elem = newfirts_elem + this->size() + 1;
+				newcapacity = newfirts_elem + next_capacity;
+				for (size_type i = 0; i < pos_len; i++)
+					alloc.construct(newfirts_elem + i, *(firts_elem + i));
+				alloc.construct(newfirts_elem + pos_len, val);
+				for (size_type j = 0; j < this->size() - pos_len; j++)
+					alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
+
+				for (size_type l = 0; l < this->size(); l++)
+					alloc.destroy(firts_elem + l);
+				if (firts_elem)
+					alloc.deallocate(firts_elem, this->capacity());
+				firts_elem = newfirts_elem;
+				last_elem = newlast_elem;
+				allocated_size = newcapacity;
+				return (iterator(firts_elem + pos_len));
+			}
+	
+			// Por ahora, insert no entra aqui cuando deberia. Se va al de abajo. De momento, cambie el de abajo a iterator. Revisar
+
+			void insert (iterator position, size_type n, const value_type& val)
+			{
+				size_type pos_len = &(*position) - firts_elem;
+				pointer newfirts_elem = pointer();
+				pointer newlast_elem = pointer();
+				pointer newcapacity = pointer();
+				size_type capacity = this->capacity();
+
+				size_type next_capacity = 0;
+				while(next_capacity < (capacity + n))
 				{
-					this->allocated_size *= 2;
-					v_data_tmp = this->alloc.allocate(this->allocated_size);
-					for (unsigned int i = 0 ; i < this->last_elem ; i++)
-						v_data_tmp[i] = this->v_data[i];
-					this->v_data = this->alloc.allocate(allocated_size);
-					this->v_data = v_data_tmp;
+					if (size_type(allocated_size - last_elem) >= n)
+						next_capacity = capacity;
+					else
+						next_capacity = (capacity * 2 > 0) ? capacity * 2 : 1; 
 				}
-				for(iterator it = v_data.begin(); it != first.end(); ++it)
-					this->v_data[this->last_elem++] = val;
+				
+				newfirts_elem = alloc.allocate( next_capacity );
+				newlast_elem = newfirts_elem + this->size() + n;
+				newcapacity = newfirts_elem + next_capacity;
+				for (size_type i = 0; i < pos_len; i++)
+					alloc.construct(newfirts_elem + i, *(firts_elem + i));
+				for (size_type i = 0; i < n; i++)
+					alloc.construct(newfirts_elem + pos_len + i, val);
+				for (size_type j = 0; j < this->size() - pos_len; j++)
+					alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
+
+				for (size_type l = 0; l < this->size(); l++)
+					alloc.destroy(firts_elem + l);
+				if (firts_elem)
+					alloc.deallocate(firts_elem, capacity);
+				firts_elem = newfirts_elem;
+				last_elem = newlast_elem;
+				allocated_size = newcapacity;
+			}
+
+			/*
+			template <class InputIterator>
+    		void insert (iterator position, InputIterator first, InputIterator last)
+			{
+				size_type pos_len = &(*position) - firts_elem;
+				pointer newfirts_elem = pointer();
+				pointer newlast_elem = pointer();
+				pointer newcapacity = pointer();
+				size_type capacity = this->capacity();
+
+				size_type next_capacity = 0;
+				size_type n = distance(first, last);
+
+				while(next_capacity < (capacity + n))
+				{
+					std::cout << "capacty: " << capacity << std::endl;
+					std::cout << "next capacty: " << next_capacity << std::endl;
+					std::cout << "n: " << n << std::endl;
+				
+					if (size_type(allocated_size - last_elem) >= n)
+						next_capacity = capacity;
+					else
+						next_capacity = (capacity * 2 > 0) ? capacity * 2 : 1; 
+				}
+				newfirts_elem = alloc.allocate( next_capacity );
+				newlast_elem = newfirts_elem + this->size() + n;
+				newcapacity = newfirts_elem + next_capacity;
+				for (size_type i = 0; i < pos_len; i++)
+					alloc.construct(newfirts_elem + i, *(firts_elem + i));
+				for (size_type i = 0; i < n; i++)
+					alloc.construct(newfirts_elem + pos_len + i, first++);
+				for (size_type j = 0; j < this->size() - pos_len; j++)
+					alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
+
+				for (size_type l = 0; l < this->size(); l++)
+					alloc.destroy(firts_elem + l);
+				if (firts_elem)
+					alloc.deallocate(firts_elem, capacity);
+				firts_elem = newfirts_elem;
+				last_elem = newlast_elem;
+				allocated_size = newcapacity;
 			}
 			*/
+			iterator erase (iterator position)
+			{
+				pointer p_pos = &(*position);
+				alloc.destroy(&(*position));
+				if (&(*position) + 1 == last_elem)
+					alloc.destroy(&(*position));
+				else
+				{
+					for (int i = 0; i < last_elem - &(*position) - 1; i++)
+					{
+						alloc.construct(&(*position) + i, *(&(*position) + i + 1));
+						alloc.destroy(&(*position) + i + 1);
+					}
+				}
+				last_elem -= 1;
+				return (iterator(p_pos));
+			}
 
+			iterator erase (iterator first, iterator last)
+			{
+				pointer p_first = &(*first);
+				for (; &(*first) != &(*last); first++)
+					alloc.destroy(&(*first));
+				for (int i = 0; i < last_elem - &(*last); i++)
+				{
+					alloc.construct(p_first + i, *(&(*last) + i));
+					alloc.destroy(&(*last) + i);
+				}
+				last_elem -= (&(*last) - p_first);
+				return (iterator(p_first));
+			}
+
+			void swap(vector& x)
+			{	
+				pointer save_start = x.firts_elem;
+				pointer save_end = x.last_elem;
+				pointer save_end_capacity = x.allocated_size;
+				allocator_type save_alloc = x.alloc;
+
+				x.firts_elem = this->firts_elem;
+				x.last_elem = this->last_elem;
+				x.allocated_size = this->allocated_size;
+				x.alloc = this->alloc;
+
+				this->firts_elem = save_start;
+				this->last_elem = save_end;
+				this->allocated_size = save_end_capacity;
+				this->alloc = save_alloc;	
+			}
+
+			void clear()
+			{
+				size_type size = this->size();
+				for (size_type i = 0; i < size; i++)
+				{
+					last_elem--;
+					alloc.destroy(last_elem);
+				}
+			}
 		private:
 
-		allocator_type	alloc;
-		pointer 		firts_elem;
-		pointer			last_elem;
-		pointer			allocated_size;
+			allocator_type	alloc;
+			pointer 		firts_elem;
+			pointer			last_elem;
+			pointer			allocated_size;
 	};
 	
 }

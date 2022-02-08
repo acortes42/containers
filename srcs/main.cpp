@@ -17,6 +17,9 @@ int main()
 	//ft::vector<int>	first(1, 2);
 	ft::vector<int> second;
 	ft::vector<int> empty;
+	ft::stack<int> stak; 
+	ft::map<int, int> map; 
+	ft::map<int, int> map2; 
 	std::vector<int>real;
 	int x;
 	//int				*data;
@@ -33,8 +36,9 @@ int main()
 	second.empty() == true?std::cout << "vacio" << std::endl: std::cout << "lleno" << std::endl;
 
 	//first.push_back(10);
-	second.resize(7, -50);
+	second.resize(6, -50);
 	/*
+
 	std::cout << "aqui llega:  " << second.back() << std::endl;
 	first.front() -= second.back();
 	std::cout << "aqui llega: " << std::endl;
@@ -44,13 +48,31 @@ int main()
 	data[3] = second[3] - 100;
 	
 	*/
-	x = 0;
+	ft::vector<int>::iterator it;
+	it = second.begin();
+  	second.insert (it, 5, 300);
+
+	 x = 0;
+	empty.push_back(10);
+	stak.push(12);
+	stak.push(11);
+	stak.push(10);
+	//empty.assign(5, 100);
+	//second.swap(empty);
+	second.erase(second.begin() + 9);
 	while(x < (int)second.size())
 	{
 		std::cout << second[x] << std::endl;
 		x++;
 	}
+	std::cout << "Mostramos aqui el top del stackk" << std::endl;
+	while(stak.size())
+	{
+		std::cout << stak.top() << std::endl;
+		stak.pop();
+	}
 
+	//empty = second;
 	
 	std::cout << "este es size: " << second.size() << std::endl;
 	std::cout << "este es capacity: " << second.capacity() << std::endl;
@@ -73,6 +95,28 @@ int main()
 		std::cerr << "--> Ninguno. Caiste en un error" << std::endl;
 	}
 	*/
+
+		const int range_int[] = {-652, -4, 98, 54, -210};
+		const std::string range_str[] = {"One", "Two", "Three", "Four", "Five"};
+
+		ft::map<int, std::string> ft_map;
+
+		for (int i = 0; i < 5; i++)
+		{
+			ft_map.insert(std::make_pair(range_int[i], range_str[i]));
+		}
+	
+	x = 0;
+	
+	/*
+	for(ft::tree_iterator<std::pair<int, int> > i = map.begin(); i != map.end(); i++)
+	{
+	//	std::cout << map.insert(std::pair<int,int>(1,100)) << std::endl;
+		x++;
+	}
+	*/
+	//map.printMap();
+	//map2 = map;
 	return (0);
 }
 
