@@ -149,7 +149,7 @@ namespace ft
 
             pointer operator->(void)
             {
-                return &(this->operator*()); 
+                return (this->operator*()); 
             }
 
             random_access_iterator& operator++(void)
@@ -256,5 +256,126 @@ namespace ft
     {
         return (lhs.base() >= rhs.base());
     }
+
+    template <typename T >
+	class BinaryTreeIterator: ft::iterator<ft::bidirectional_iterator_tag, T>
+	{
+		private:
+
+		 	T *currNode_;
+            T *lastNode_;
+
+		public:
+
+            BinaryTreeIterator()
+            :
+                lastNode_(),
+                currNode_()
+            {}
+
+			BinaryTreeIterator(T *root) 
+			{
+				currNode_ = root;
+				if(currNode_ != NULL)
+					while (currNode_->HasLeftChild())
+						currNode_++;
+			}
+
+            BinaryTreeIterator(T * current, T *last)
+			:
+				currNode_(current),
+				lastNode_(last)
+			{}
+
+			bool Valid()
+			{
+				return currNode_ != nullptr;
+			}
+
+			bool HasParent()
+			{
+				if (currNode_ != nullptr && currNode_->parent_ != nullptr)
+					return 1;
+				return 0;
+			}
+
+			bool HasLeftChild()
+			{
+					if (currNode_ != nullptr && currNode_->lchild_ != nullptr)
+						return 1;
+					return 0;
+			}
+
+			bool HasRightChild()
+			{
+				if (currNode_ != nullptr && currNode_->rchild_ != nullptr)
+					return 1;
+				return 0;
+			}
+
+			bool IsLeftChild()
+			{
+				if (currNode_ != nullptr && currNode_->parent_ != nullptr && currNode_ == currNode_->parent_->lchild_)
+					return 1;
+				return 0;
+			}
+
+			bool IsRightChild()
+			{
+				if (currNode_ != nullptr && currNode_->parent_ != nullptr && currNode_ == currNode_->parent_->rchild_)
+					return 1;
+				return 0;
+			}
+
+			// useful functions
+
+			T&	Retrieve()
+			{
+				return (currNode_->value);
+            }
+
+			// overloads
+
+            bool operator ==(const BinaryTreeIterator& e1)
+			{
+				return (*this == e1);
+			}
+
+            bool operator !=(const BinaryTreeIterator& e1)
+			{
+                (void)e1;
+                return (true);
+				//return (*this != e1);
+			}
+
+			BinaryTreeIterator &operator ++()
+			{
+				if (currNode_ != nullptr)
+					currNode_ = currNode_->lchild_;
+				return *this;
+			}
+
+			BinaryTreeIterator &operator ++(int)
+			{
+				if (currNode_ != nullptr)
+					currNode_ = currNode_->rchild_;
+				return *this;
+			}
+
+			BinaryTreeIterator &operator --()
+			{
+				if (currNode_ != nullptr)
+					currNode_ = currNode_->parent_;
+				return *this;
+			}
+
+            BinaryTreeIterator &operator --(int)
+			{
+				if (currNode_ != nullptr)
+					currNode_ = currNode_->parent_;
+				return *this;
+			}
+	};
+
 }
 #endif

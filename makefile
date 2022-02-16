@@ -61,6 +61,12 @@ fclean:			clean
 
 re:				fclean all
 
+debug: 			$(OBJS) includes/containers.hpp
+		@mkdir -p ${DIR_OBJS}
+		@${CC} ${CFLAGS} -g -c ${SRCS}
+		@mv *.o compiled_objs
+		@$(CC) $(CC_FLAGS) $(SRCS) -o ${NAME}
+
 # PHONY #
 
 .PHONY:			all clean fclean re

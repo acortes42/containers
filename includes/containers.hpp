@@ -11,7 +11,7 @@
 #include "iterators/iterator.hpp"
 #include "iterators/reverseIterator.hpp"
 #include "iterators/utilityFunctions.hpp"
-#include "iterators/binary_tree_search.hpp"
+#include "iterators/map_iterator.hpp"
 #include "map.hpp"
 #include "stack.hpp"
 #include "vector.hpp"

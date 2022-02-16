@@ -95,25 +95,74 @@ int main()
 		std::cerr << "--> Ninguno. Caiste en un error" << std::endl;
 	}
 	*/
+/*
+	std::map<int, int> new_map;
 
-		const int range_int[] = {-652, -4, 98, 54, -210};
-		const std::string range_str[] = {"One", "Two", "Three", "Four", "Five"};
+	new_map.insert(std::make_pair(50, 20));
+	new_map.insert(std::make_pair(0, 10));
+	new_map.insert(std::make_pair(90, 30));
+	new_map.insert(std::make_pair(3, 40));
+	new_map.insert(std::make_pair(4, 50));
+	//std::cout << "Esto es new map: " << new_map[0] << std::endl;
 
-		ft::map<int, std::string> ft_map;
+	std::map<int, int>::iterator it = new_map.begin();
 
-		for (int i = 0; i < 5; i++)
-		{
-			ft_map.insert(std::make_pair(range_int[i], range_str[i]));
-		}
-	
+	std::cout << "Esto es iter: " << iter->first << std::endl;
 	x = 0;
-	
-	/*
-	for(ft::tree_iterator<std::pair<int, int> > i = map.begin(); i != map.end(); i++)
+	while(it != new_map.end())
 	{
-	//	std::cout << map.insert(std::pair<int,int>(1,100)) << std::endl;
-		x++;
+		int num = it->first;
+		std::cout << "Esto es el for: " << num << std::endl;
+		it++;
 	}
+*/
+
+	ft::map<char,int> mymap;
+
+	//mymap.find('c');
+	
+	mymap.insert(std::make_pair('d', 500));
+	std::cout << "----------------------------------" << std::endl;
+
+	mymap.insert(std::make_pair('g', 100));
+	std::cout << "----------------------------------" << std::endl;
+	
+	mymap.insert(std::make_pair('a', 600));
+		std::cout << "----------------------------------" << std::endl;
+	
+		mymap.insert(std::make_pair('1', 100));
+		std::cout << "----------------------------------" << std::endl;
+
+	
+	ft::map<char,int>::iterator new_it = mymap.find('3');
+
+	//new_it++;
+	std::cout << "Esto expoto por el operador de -> " << new_it[0]->second << std::endl;
+	return(new_it[0]->second );
+
+	//mymap.insert(std::make_pair('a', 100));	
+/*
+	int new_int = mymap.find('3')->second ;
+	std::cout << "wololo " << new_int << std::endl;
+*/
+	//std::cout << mymap['d'] << std::endl;
+	/*
+	std::cout << "da fuck ? \n";
+	mymap.insert(std::make_pair('e', 100));
+	mymap.insert(std::make_pair('z', 100));
+	//std::cout << mymap.find('d')->second << std::endl;	
+
+	mymap.insert(std::make_pair('2', 500));
+	mymap.insert(std::make_pair('1', 500));
+	mymap.insert(std::make_pair(' ', 500));
+	
+	mymap['a'] = 200;
+	mymap['c'] = 300;
+
+	// show content:
+	
+	for (std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); it++)
+		std::cout << it->first.second << " => " << it->second << '\n';
 	*/
 	//map.printMap();
 	//map2 = map;
