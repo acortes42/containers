@@ -117,28 +117,32 @@ int main()
 	}
 */
 
-	ft::map<char,int> mymap;
+	ft::map<int,int> mymap;
 
 	//mymap.find('c');
 	
-	mymap.insert(std::make_pair('d', 500));
+	mymap.insert(std::make_pair(5, 500));
 	std::cout << "----------------------------------" << std::endl;
 
-	mymap.insert(std::make_pair('g', 100));
+	mymap.insert(std::make_pair(6, 100));
 	std::cout << "----------------------------------" << std::endl;
 	
-	mymap.insert(std::make_pair('a', 600));
+	mymap.insert(std::make_pair(4, 600));
 		std::cout << "----------------------------------" << std::endl;
 	
-		mymap.insert(std::make_pair('1', 100));
+	ft::map<int,int>::iterator new_it = mymap.insert(std::make_pair(1, 100)).first ;
 		std::cout << "----------------------------------" << std::endl;
 
+	mymap.insert(std::make_pair(100, 600));
+		std::cout << "----------------------------------" << std::endl;
 	
-	ft::map<char,int>::iterator new_it = mymap.find('3');
+	ft::map<int,int>::iterator new_it2 = mymap.find(5);
 
 	//new_it++;
-	std::cout << "Esto expoto por el operador de -> " << new_it[0]->second << std::endl;
-	return(new_it[0]->second );
+	//int new_char = new_it->second;
+	//std::cout << "wololo"<< std::endl;
+	std::cout << "funciona el operator-> " << new_it->first << std::endl;
+	return(0 );
 
 	//mymap.insert(std::make_pair('a', 100));	
 /*

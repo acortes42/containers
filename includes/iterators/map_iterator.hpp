@@ -4,183 +4,83 @@
 namespace ft
 {
 	template <class Key, class T>
-	class Node
+	struct Node
 	{
-		public:
-
 			std::pair<Key, T> pair;
 			Node<Key, T> *left;
 			Node<Key, T> *right;
 			Node<Key, T> *parent;
-
-			Node()
-			:
-				pair(),
-				left(nullptr),
-				right(nullptr),
-				parent(nullptr)
-			{}
-
-			Node (const T& t)
-			:
-				pair(t),
-				parent(nullptr),
-				left(nullptr),
-				right(nullptr)
-			{}
-
-            Node (Node	*parent, Node	*left, Node	*right)
-			:
-				pair(),
-				parent(parent),
-				left(left),
-				right(right)
-			{}
-
-			Node (const T& t, Node	*parent, Node	*left, Node	*right)
-			:
-				pair(t),
-				parent(parent),
-				left(left),
-				right(right)
-			{}
-
-			Node &operator=(const Node &x)
-			{
-				this->pair = x.value;
-				this->left = x.left;
-				this->right = x.right;
-				this->parent = x.parent;
-			}
-
-			bool operator ==(const Node &x)
-			{
-				return (this == x);
-			}
-
-			bool operator !=(const Node &x)
-			{
-				return (this->pair != x.pair);
-			}
-
-			bool Exist()
-			{
-				if (this->pair.first)
-					return (1);
-				return (0);
-			}
-		
-			bool HasParent()
-			{
-				if (this != nullptr && this->parent != nullptr)
-					return 1;
-				return 0;
-			}
-
-			bool HasLeftChild()
-			{
-					if (this != nullptr && this->left != nullptr)
-						return 1;
-					return 0;
-			}
-
-			bool HasRightChild()
-			{
-				if (this != nullptr && this->right != nullptr)
-					return 1;
-				return 0;
-			}
-
-			bool IsLeftChild()
-			{
-				if (this != nullptr && this->parent != nullptr && this == this->parent->left)
-					return 1;
-				return 0;
-			}
-
-			bool IsRightChild()
-			{
-				if (this != nullptr && this->parent != nullptr && this == this->parent->right)
-					return 1;
-				return 0;
-			}
-
-			T&	Retrieve()
-			{
-				return (this->pair);
-			}
 	};
 
-	template <typename K, typename T>
-	class MapIterator
+	template <typename T, typename Key, typename Value>
+	class MapIterator: ft::iterator<ft::bidirectional_iterator_tag, T>
 	{
 		public:
 
-			typedef std::pair<K, T> 				value_type;
-			typedef std::pair<K, T> 				*value_pointer;
-			typedef std::pair<K, T> 				&value_reference;
-			typedef ft::Node<K, T>*					node_pointer;
-			typedef ft::Node<K, T>&					node_reference;
-			typedef MapIterator<K, T>				curr_class;
-			typedef MapIterator<K, T>       		iterator;
-			typedef size_t							size_type;
+			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::iterator_category     iterator_category;
+			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::value_type            value_type;
+			typedef typename ft::iterator<ft::bidirectional_iterator_tag, T>::difference_type       difference_type;
+			typedef MapIterator<T, Key, Value>		this_class;
+			typedef T								iterator;
+			typedef T								*pointer;
+			typedef T								&reference;
+			typedef std::pair<Key, Value>			pair_value;
+			typedef std::pair<Key, Value>			&pair_reference;
+			typedef std::pair<Key, Value>			*pair_pointer;
 
-			node_pointer _ptr;
 
-			MapIterator(void): _ptr(0) {}
-			MapIterator(const node_pointer ptr): _ptr(ptr) {}
-			MapIterator(const iterator &other) { *this = other;}
+			pointer _iter;
+
+			MapIterator()
+			: 
+				_iter(u_nullptr)
+			{}
+
+			MapIterator(const pointer iter)
+			: 
+				_iter(iter)
+			{}
+
+			MapIterator(const iterator &other) {*this = other;}
 			
-			MapIterator &operator=(const iterator &other)
+			MapIterator &operator=(const MapIterator &other)
 			{
-				_ptr = other._ptr;
+				_iter = other._iter;
 				return (*this);
 			};
-			
-			node_pointer node(void) { return (_ptr);}
-			
-			node_pointer operator*(void) { return (_ptr);}
-			
-			value_pointer operator->()  
-			{ 
-				std::cout << "Esto es un mensaje personal para decir que segfault va\n";
-				return (&this->_ptr->pair );
-			}
-			
-			bool operator==(const curr_class &other) { return (_ptr == other._ptr);}
-			bool operator!=(const curr_class &other) { return (!(*this == other));}
-			
-			MapIterator &operator++(void)
-			{
-				_ptr = this->ptr_next(_ptr);
-				return (*this);
-			}
 
-			MapIterator &operator--(void)
-			{
-				_ptr = this->ptr_prev(_ptr);
-				return (*this);
-			}
+			virtual ~MapIterator(){}
+
+			MapIterator & operator++(void)
+            {
+                _iter(_iter->right);
+                return (*this);
+            }
 
 			MapIterator operator++(int)
-			{
-				MapIterator tmp(*this);
-				this->operator++();
-				return (tmp);
-			}
+            {
+                iter_next(_iter);
+                return (*this);
+            }
 
-			MapIterator operator--(int)
+			pair_reference operator*(void) const 
+            { 
+                return (*_iter->pair); 
+            }
+
+            pair_pointer operator->(void)
+            {
+                return (&_iter->pair); 
+            }
+			
+			bool Retrieve()
 			{
-				MapIterator tmp(*this);
-				this->operator--();
-				return (tmp);
+				return(*_iter->pair.Retrieve());
 			}
-			value_pointer operator[] (size_type n) 
-			{ 
-				(void)n;
-				
-				return (&this->_ptr->pair); 
-			}
+			bool operator==(const this_class &other) { return (_iter == other._iter);}
+			bool operator!=(const this_class &other) { return (!(*this == other));}
+
+
 
 
 		private:
@@ -200,21 +100,24 @@ namespace ft
 				If you can't go up anymore, then there's no successor
 			*/
 
-			node_pointer ptr_next(node_pointer ptr)
+			pointer iter_next(pointer iter)
 			{
 				//falla en varios sitios
 				
-				node_pointer next;
-				if (!ptr->right)
+				pointer next;
+
+				if (!iter->right)
 				{
-					next = ptr;
+					std::cout << "errrorr asdfasdf\n";
+					pointer next(iter);
+					std::cout << "errrorr asdfasdf\n";
 					while (next->parent && next == next->parent->right)
 						next = next->parent;
 					next = next->parent;
 				}
 				else
 				{
-					next = ptr->right;
+					next = iter->right;
 					while (next->left)
 						next = next->left;
 				}
@@ -223,25 +126,26 @@ namespace ft
 				return (next);
 			};
 
-			node_pointer ptr_prev(node_pointer ptr)
+			pointer iter_prev(pointer iter)
 			{
-				node_pointer next;
+				pointer next;
 
-				if (!ptr->left)
+				if (!iter->left)
 				{
-					next = ptr;
+					next = iter;
 					while (next->parent && next == next->parent->left)
 						next = next->parent;
 					next = next->parent;
 				}
 				else
 				{
-					next = ptr->left;
+					next = iter->left;
 					while (next->right)
 						next = next->right;
 				}
 				return (next);
 			};
+
 	};
 }
 

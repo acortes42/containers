@@ -23,14 +23,19 @@ namespace ft
 			typedef typename Allocator::pointer pointer;
 			typedef typename Allocator::const_pointer const_pointer;
 			
-			// Falta aplicar iterator 
-			typedef typename ft::MapIterator<Key, T>		iterator;
-			typedef typename ft::MapIterator<Key, T>		const_iterator;
+			//nodes
 
-			typedef std::reverse_iterator<iterator> reverse_iterator;	
-			typedef std::reverse_iterator<const iterator> const_reverse_iterator;	
 			typedef Node<Key, T>	node;
 			typedef node			*node_pointer;
+			// Falta aplicar iterator 
+
+			typedef typename ft::MapIterator<node, key_type, mapped_type>		iterator;
+			typedef typename ft::MapIterator<node, key_type, mapped_type>		const_iterator;
+
+			typedef std::reverse_iterator<iterator> reverse_iterator;	
+			typedef std::reverse_iterator<const iterator> const_reverse_iterator;
+
+
 			//constructors
 
 			explicit map (const key_compare& comp = key_compare(),
@@ -114,11 +119,8 @@ namespace ft
 			iterator end()
 			{
 				node_pointer all_right = this->root;
-				std::cout << "end	" << std::endl;
 				while (all_right->HasRightChild())
 					all_right = all_right->right;
-				std::cout << "end 2	" << std::endl;
-
 				return(iterator(all_right));
 			}
 
@@ -152,7 +154,7 @@ namespace ft
 			mapped_type& operator[] (const key_type& k)
 			{
 				iterator new_iter = this->find(k);
-				
+
 				if (new_iter != this->end())
 					return(new_iter._ptr->pair.second );
 				return(this->insert(std::make_pair(new_iter._ptr->pair.first, new_iter._ptr->pair.second)).first._ptr->pair.second );
@@ -203,17 +205,22 @@ namespace ft
 
 			iterator find (const key_type& k)
 			{
-				if(!root->Exist())
-					return(this->end());
-				std::cout << "find from find" << std::endl;
-				return (iterator(find_this(root, k)));
+				iterator x = find_this(k).first;
+
+				std::cout << "x->pair.first : " << x._iter->pair.first << std::endl;
+				std::cout << "x->pair.secont : " << x._iter->pair.second << std::endl;
+
+				return(x);
 			}
 
 			const_iterator find (const key_type& k) const
 			{
 				if(!root->Exist())
 					return(this->end());
-				return (iterator(find_this(root, k)));
+				std::pair<iterator, int> tmp = find_this(k);
+				if(tmp.second == 0)
+					return (tmp.first);
+				return(this->end());
 			}
 
 			bool operator ==(const map& e1)
@@ -238,30 +245,67 @@ namespace ft
 			node_pointer	root;
 			size_type		map_size;
 
-			const node_pointer	find_this(node_pointer root, const key_type& firstValue)
+/*
+			std::pair<iterator, int>	find_this(node root, const key_type& firstValue)
 			{
-				std::cout << "find this" << std::endl;
-				if (root->left == nullptr && root->right == nullptr)
+				std::cout << "root.pair.first : " << root.pair.first << " ,firstValue: " << firstValue << std::endl;
+				if (!root.pair.first)
+					return(std::make_pair(iterator(), 0));
+				if (root.pair.first == firstValue)
 				{
-					std::cout << "find no childs" << std::endl;
-					return(nullptr);
+					std::cout << "equal value"<< std::endl;
+					return(std::make_pair(iterator(), 0));
 				}
-				std::cout << "find firstValue: "  << firstValue << " , find root->pair.first: " << root->pair.first << std::endl;		
-				if (firstValue < root->pair.first && root->left != nullptr)
+				if (firstValue < root.pair.first && root.left)
 				{
-					std::cout << "find a lesser" << std::endl;
-					find_this(root->left, firstValue);
+					node tmp_node = *root.left;
+					std::cout << "root.left tmp_node.pair.first of : " <<  tmp_node.pair.first << std::endl;
+					find_this(tmp_node, firstValue);
 				}
-				else if (firstValue > root->pair.first && root->right != nullptr )
+				else if (firstValue > root.pair.first && root.right )
 				{
-					std::cout << "find a bigger" << std::endl;
-					find_this(root->right, firstValue);
-					
+					node tmp_node = *root.right;
+					std::cout << "----> rightValue: : " <<  tmp_node.pair.first << std::endl;
+					find_this(tmp_node, firstValue);
 				}
-				if (firstValue == root->pair.first)
-						return(root->parent);
-				std::cout << "find this 2" << std::endl;
-				return(nullptr);
+				std::cout << "escape with root.pair.first of : " <<  root.pair.first << std::endl;
+				node_pointer tmp_node = &root;
+				return(std::make_pair(iterator(tmp_node), 1));
+			}	
+*/
+			std::pair<iterator, int> find_this(const key_type& firstValue)
+			{	
+				int ret_int;
+				node tmp_node;
+
+				tmp_node = *this->root;
+				ret_int = 1;
+				while(true)
+				{
+					if (tmp_node.pair.first == firstValue)
+					{
+						std::cout << "equal value"<< std::endl;
+						ret_int = 0;
+						break;
+					}
+					if (firstValue < tmp_node.pair.first && tmp_node.left)
+					{
+						tmp_node = *tmp_node.left;
+						std::cout << "tmp_node.left tmp_node.pair.first of : " <<  tmp_node.pair.first << std::endl;
+						continue;
+					}
+					else if (firstValue > tmp_node.pair.first && tmp_node.right )
+					{
+						tmp_node = *tmp_node.right;
+						std::cout << "----> rightValue: : " <<  tmp_node.pair.first << std::endl;
+						continue;
+					}
+					break;
+				}
+				
+				std::cout << "escape with tmp_node.pair.first of : " <<  tmp_node.pair.first << std::endl;
+				node_pointer tmp_node_pointer = &tmp_node;
+				return(std::make_pair(iterator(tmp_node_pointer), ret_int));
 			}	
 
 			node_pointer	newNode(key_type first, mapped_type second, node_pointer parent)
@@ -279,51 +323,44 @@ namespace ft
 
 			node_pointer insertNode(node_pointer root, const value_type& val)
 			{
-				if (!root->HasLeftChild() && !root->HasRightChild() && !root->pair.first)
+				if (!root->left && !root->right && !root->pair.first)
 				{
 						std::cout << "root of roots" << std::endl;
 						root->pair.first = val.first;
 						root->pair.second = val.second;	
 						return(root);
 				}
-				std::cout << "val.first: "  << val.first << " , root->pair.first: " << root->pair.first << std::endl;
 				if(val.first < root->pair.first)
 				{
-					std::cout << "root->left insert node" << std::endl;
-
 					if (!root->left)
 					{
 						root->left = newNode(val.first, val.second, root);
-						std::cout << "root->left more left" << std::endl;
 						return(root->left);
 					}
-					std::cout << "root->left insert node out" << std::endl;
-
 					this->insertNode(root->left, val);
 				}
 				else if(val.first > root->pair.first)
 				{
-					std::cout << "root->right insert node" << std::endl;
-
 					if (!root->right)
 					{
-						std::cout << "root->right insert node without right" << std::endl;
-
 						root->right = newNode(val.first, val.second, root);
 						return(root->right);
 					}
 					this->insertNode(root->right, val);
 				}
-				std::cout << "return root" << std::endl;
 				return(root);
 			}
 
 			std::pair<iterator,bool> insertPair(node_pointer root, const value_type& val)
 			{
-				if (this->find_this(root, val.first) != nullptr)
+				//iterator tmp = this->find(val.first);
+				std::pair<iterator, int> tmp = find_this(val.first);
+				/*if (tmp->first)
+						std::cout << "no exploto" << std::endl;	*/
+				if (tmp.second == 0)
 				{
 					std::cout << "encontrado" << std::endl;
-					return (std::make_pair(iterator(this->find_this(root, val.first)), true));
+					return (tmp);
 				}
 				map_size++;
 				return (std::make_pair(iterator(insertNode(root, val)), true));
