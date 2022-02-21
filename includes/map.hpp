@@ -1,7 +1,7 @@
 #ifndef MAP_HPP
 #define MAP_HPP
 
-#include "iterators/map_iterator.hpp"
+#include "iterators/binary_tree.hpp"
 #include "containers.hpp"
 
 namespace ft
@@ -14,7 +14,7 @@ namespace ft
 			typedef	Key	key_type;	
 			typedef	T	mapped_type;
 			typedef std::pair<Key, T>	value_type;
-			typedef std::size_t	size_type;
+			typedef size_t	size_type;
 			typedef	std::ptrdiff_t	difference_type;
 			typedef	Compare	key_compare;
 			typedef Allocator allocator_type;
@@ -22,15 +22,16 @@ namespace ft
 			typedef const value_type&	const_reference;
 			typedef typename Allocator::pointer pointer;
 			typedef typename Allocator::const_pointer const_pointer;
+			typedef Binary_tree<value_type, Compare>	BTree;
 			
 			//nodes
 
-			typedef Node<Key, T>	node;
+			typedef Node<value_type>	node;
 			typedef node			*node_pointer;
 			// Falta aplicar iterator 
 
-			typedef typename ft::MapIterator<node, key_type, mapped_type>		iterator;
-			typedef typename ft::MapIterator<node, key_type, mapped_type>		const_iterator;
+			typedef typename ft::MapIterator<node, Compare>		iterator;
+			typedef typename ft::MapIterator<node, Compare>		const_iterator;
 
 			typedef std::reverse_iterator<iterator> reverse_iterator;	
 			typedef std::reverse_iterator<const iterator> const_reverse_iterator;
@@ -43,25 +44,19 @@ namespace ft
 			:
 				comparation(comp), 
 				allocated(alloc),
+				tree(),
 				map_size(0)
-			{
-				std::cout << "check	" << std::endl;
-				root = newNode(key_type(), mapped_type(), nullptr);
-			}
+			{}
 
 			template <class InputIterator>  map (InputIterator first, InputIterator last,
 				const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
 			:
+				tree(),
 				comparation(comp), 
 				allocated(alloc),
 				map_size(0)
 			{
-				while(first != last)
-				{
-					root->insert(std::make_pair(first.first, first.second));
-					this->map_size++;
-					first++;
-				}
+				tree->insert(std::make_pair(iterator(first, last), true));
 			}
 
 			map (const map& x)
@@ -74,11 +69,13 @@ namespace ft
 
 			// DESTRUCTOR a revisar
 
+			/*
 			~map()
 			{
-
+				this->
 			};
-			
+			*/
+
 			map& operator= (const map& x)
 			{
 				if (*this == x)
@@ -94,49 +91,31 @@ namespace ft
 
 			iterator begin()
 			{
-				node_pointer all_left = this->root;
-				if (!(all_left->left) && !(all_left->right))
-					return(this->end());
-				if (!(all_left->left && all_left->right))
-					all_left = all_left->right;
-				while (all_left->left)
-					all_left = all_left->left;
-				return(iterator(all_left));
+				return(iterator(this->tree->_last_node.left, this->tree->_last_node.right));
 			}
 
 			const_iterator const_begin() const
 			{
-				node_pointer all_left = this->root;
-				if (!(all_left->left) && !(all_left->right))
-					return(this->end());
-				if (!(all_left->left && all_left->right))
-					all_left = all_left->right;
-				while (all_left->left)
-					all_left = all_left->left;
-				return(const_iterator(all_left));
+				return(const_iterator(this->tree->left, this->tree->right));
 			}
 
 			iterator end()
 			{
-				node_pointer all_right = this->root;
-				while (all_right->HasRightChild())
-					all_right = all_right->right;
-				return(iterator(all_right));
+				return(iterator(this->tree._last_node, this->tree._last_node));
 			}
 
 			const_iterator const_end() const
 			{
-				node_pointer all_right = this->root;
-				while (all_right->right)
-					all_right = all_right->right;
-				return(const_iterator(all_right));
+				return(const_iterator(this->tree._last_node, this->tree._last_node));
 			}
 
 			// capacity
 
 			bool empty() const
 			{
-				return(root->exist());
+				if (this->tree->left == this->tree->right)
+					return(0);
+				return(1);
 			}
 
 			size_type size() const
@@ -146,7 +125,7 @@ namespace ft
 
 			size_type	max_size() const
 			{ 
-				return (std::numeric_limits<size_type>::max() / (sizeof(Node<key_type, mapped_type>)));
+				return (std::numeric_limits<size_type>::max() / (sizeof(Node<value_type>)));
 			}
 
 			// Element access
@@ -155,22 +134,22 @@ namespace ft
 			{
 				iterator new_iter = this->find(k);
 
-				if (new_iter != this->end())
-					return(new_iter._ptr->pair.second );
-				return(this->insert(std::make_pair(new_iter._ptr->pair.first, new_iter._ptr->pair.second)).first._ptr->pair.second );
+				if (new_iter == this->end())
+					this->insert(std::make_pair(k, mapped_type()));
+				return((*new_iter).second);
 			}
 
 			//modifiers
 			
 			std::pair<iterator,bool> insert (const value_type& val)
 			{
-				return((this->insertPair(root, std::make_pair(val.first, val.second))));
+				return(this->tree.insertPair(val));
 			};
 			
 			iterator insert (iterator position, const value_type& val)
 			{
 				(void)position;
-				return(this->insertPair(root, std::make_pair(val.first, val.second)).first);
+				return(this->tree.insertPair(val).first);
 			}
 
 			template <class InputIterator>
@@ -178,7 +157,7 @@ namespace ft
 			{
 				while(first != last)
 				{
-					root->insert(std::make_pair(first._ptr->pair.first, first._ptr->pair.second));
+					tree->insert(*first);
 					this->map_size++;
 					first++;
 				}
@@ -205,22 +184,13 @@ namespace ft
 
 			iterator find (const key_type& k)
 			{
-				iterator x = find_this(k).first;
-
-				std::cout << "x->pair.first : " << x._iter->pair.first << std::endl;
-				std::cout << "x->pair.secont : " << x._iter->pair.second << std::endl;
-
-				return(x);
+				return(iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->tree._last_node));
 			}
 
 			const_iterator find (const key_type& k) const
 			{
-				if(!root->Exist())
-					return(this->end());
-				std::pair<iterator, int> tmp = find_this(k);
-				if(tmp.second == 0)
-					return (tmp.first);
-				return(this->end());
+				return(const_iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->end()));
+
 			}
 
 			bool operator ==(const map& e1)
@@ -240,39 +210,13 @@ namespace ft
 
 		private:
 
+			// Of all this values, tree is the only one that is used properly. 
+
 			Compare			comparation;
 			allocator_type	allocated;
-			node_pointer	root;
+			BTree			tree;
 			size_type		map_size;
 
-/*
-			std::pair<iterator, int>	find_this(node root, const key_type& firstValue)
-			{
-				std::cout << "root.pair.first : " << root.pair.first << " ,firstValue: " << firstValue << std::endl;
-				if (!root.pair.first)
-					return(std::make_pair(iterator(), 0));
-				if (root.pair.first == firstValue)
-				{
-					std::cout << "equal value"<< std::endl;
-					return(std::make_pair(iterator(), 0));
-				}
-				if (firstValue < root.pair.first && root.left)
-				{
-					node tmp_node = *root.left;
-					std::cout << "root.left tmp_node.pair.first of : " <<  tmp_node.pair.first << std::endl;
-					find_this(tmp_node, firstValue);
-				}
-				else if (firstValue > root.pair.first && root.right )
-				{
-					node tmp_node = *root.right;
-					std::cout << "----> rightValue: : " <<  tmp_node.pair.first << std::endl;
-					find_this(tmp_node, firstValue);
-				}
-				std::cout << "escape with root.pair.first of : " <<  root.pair.first << std::endl;
-				node_pointer tmp_node = &root;
-				return(std::make_pair(iterator(tmp_node), 1));
-			}	
-*/
 			std::pair<iterator, int> find_this(const key_type& firstValue)
 			{	
 				int ret_int;
@@ -308,19 +252,7 @@ namespace ft
 				return(std::make_pair(iterator(tmp_node_pointer), ret_int));
 			}	
 
-			node_pointer	newNode(key_type first, mapped_type second, node_pointer parent)
-			{
-
-				node_pointer new_node =	new Node<key_type, mapped_type>();
-															
-				new_node->pair = std::make_pair(first, second);
-				new_node->left = nullptr;
-				new_node->right = nullptr;
-				new_node->parent = parent;
-				
-				return(new_node);
-			}
-
+/*
 			node_pointer insertNode(node_pointer root, const value_type& val)
 			{
 				if (!root->left && !root->right && !root->pair.first)
@@ -350,20 +282,47 @@ namespace ft
 				}
 				return(root);
 			}
-
-			std::pair<iterator,bool> insertPair(node_pointer root, const value_type& val)
+*/
+			node_pointer insertNode(node_pointer root, const value_type& val)
 			{
-				//iterator tmp = this->find(val.first);
-				std::pair<iterator, int> tmp = find_this(val.first);
-				/*if (tmp->first)
-						std::cout << "no exploto" << std::endl;	*/
-				if (tmp.second == 0)
+				node_pointer tmp_node;
+
+				tmp_node = this->root;
+				while (true)
 				{
-					std::cout << "encontrado" << std::endl;
-					return (tmp);
+					std::cout << "explooooosion" << std::endl;
+					if (!root->left && !root->right && !root->pair.first)
+					{
+							std::cout << "root of roots" << std::endl;
+							tmp_node->pair.first = val.first;
+							tmp_node->pair.second = val.second;	
+							return(tmp_node);
+					}
+					if(val.first < root->pair.first)
+					{
+						std::cout << "crash left" << std::endl;
+						if (!root->left)
+						{
+							tmp_node->left = newNode(val.first, val.second, root);
+							return(tmp_node->left);
+						}
+						tmp_node = tmp_node->left;
+						continue;
+					}
+					else if(val.first > root->pair.first)
+					{
+						if (!root->right)
+						{
+							tmp_node->right = newNode(val.first, val.second, root);
+							return(tmp_node->right);
+						}
+						std::cout << "crash right" << std::endl;
+						tmp_node(tmp_node->right);
+						std::cout << "crash right 2" << std::endl;
+						continue;
+					}
 				}
-				map_size++;
-				return (std::make_pair(iterator(insertNode(root, val)), true));
+				return(tmp_node);
 			}
 	};
 

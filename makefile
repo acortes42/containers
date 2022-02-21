@@ -45,7 +45,8 @@ all:			$(NAME)
 $(NAME):		$(OBJS) includes/containers.hpp
 		@mkdir -p ${DIR_OBJS}
 		@${CC} ${CFLAGS} -c ${SRCS}
-		@mv *.o compiled_objs
+		@mv -f *.o ${DIR_OBJS}
+		@$(RM) *.o
 		@$(CC) $(CC_FLAGS) $(SRCS) -o ${NAME}
 
 # OBLIGATORY PART #
@@ -53,6 +54,7 @@ $(NAME):		$(OBJS) includes/containers.hpp
 clean:
 				@$(RM) $(DIR_OBJS)
 				@echo "$(_RED) '"$(DIR_OBJS)"' has been deleted.🗑️"
+				@$(RM) *.o
 
 fclean:			clean
 				@$(RM) $(NAME)

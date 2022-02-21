@@ -12,165 +12,158 @@
 
 #include "../includes/containers.hpp"
 
+void	checker(bool comparation, std::string str)
+{
+	std::cout << ANSI_COLOR_YELLOW<< "----------------------" << std::endl;
+	std::cout << str << " : ";
+	if (comparation)
+		std::cout << ANSI_COLOR_GREEN << "OK" << std::endl;
+	else
+		std::cout << ANSI_COLOR_RED<< "FAILTURE!!!" << std::endl;
+	std::cout << ANSI_COLOR_YELLOW<< "----------------------" << std::endl;
+	std::cout << ANSI_COLOR_RESET << std::endl;
+}
+
 int main()
 {
-	//ft::vector<int>	first(1, 2);
+
 	ft::vector<int> second;
 	ft::vector<int> empty;
-	ft::stack<int> stak; 
+	
 	ft::map<int, int> map; 
 	ft::map<int, int> map2; 
 	std::vector<int>real;
 	int x;
 	//int				*data;
 
-	second.empty() == true?std::cout << "vacio" << std::endl: std::cout << "lleno" << std::endl;
+	checker(second.empty() == real.empty(), "Vector empty()");
 
 	real.push_back(5);
-	second.push_back(1);
-	second.push_back(2);
-	second.push_back(3);
-	second.push_back(4);
 	second.push_back(5);
 
-	second.empty() == true?std::cout << "vacio" << std::endl: std::cout << "lleno" << std::endl;
+	checker(second.size() == real.size(), "Vector size()");
+
+	std::vector<int> werfda2;
+	std::vector<int> etgrfawe2 (4,100);
+	std::vector<int> nhrbegfv2 (etgrfawe2.begin(),etgrfawe2.end());
+	std::vector<int> jytehrgfe2 (nhrbegfv2); 
+
+	ft::vector<int> werfda;
+	ft::vector<int> etgrfawe (4,100);
+	ft::vector<int> nhrbegfv (etgrfawe.begin(),etgrfawe.end());
+	ft::vector<int> jytehrgfe (nhrbegfv); 
+
+	checker(second.max_size() == real.max_size(), " ft::vector::max_size() ==  std::vector::max_size() gives a failture");
 
 	//first.push_back(10);
-	second.resize(6, -50);
-	/*
-
-	std::cout << "aqui llega:  " << second.back() << std::endl;
-	first.front() -= second.back();
-	std::cout << "aqui llega: " << std::endl;
-	second.at(1) -= second.front();
-	second[4] = 0;
-	data = second.data();
-	data[3] = second[3] - 100;
 	
-	*/
-	ft::vector<int>::iterator it;
-	it = second.begin();
-  	second.insert (it, 5, 300);
+	second.resize(6, -50);
+	real.resize(6, -50);
+	
+	checker(second.size() == real.size(), "Vector size() after resize");
+
+	// ft::vector<int>	first(second.begin() + 2, second.begin(), second.end());
+
+	ft::vector<int>::iterator it = second.begin();
+	std::vector<int>::iterator real_it = real.begin();
+
+	std::cout << "----  Check begin() and end()  ----- \n" << std::endl;
+	while(it != second.end())
+	{
+		std::cout << ANSI_COLOR_CYAN<< *it << "  ==  " << *real_it << std::endl;
+		it++;
+		real_it++;
+	}
+
+	checker(second.at(4) == real.at(4), "Vector at()");
+
+	ft::vector<int>::iterator vect_it2;
+	vect_it2 = second.begin();
+  	second.insert (vect_it2, 5, 300);
+
+	std::vector<int>::iterator vect_new_it2;
+	vect_new_it2 = real.begin();
+  	real.insert (vect_new_it2, 5, 300);
+
+	checker(*vect_new_it2 + 3 == *vect_it2 + 3, "Vector insert: fill");
 
 	 x = 0;
-	empty.push_back(10);
+	std::cout << ANSI_COLOR_CYAN << "----  Start stack  ----- \n" << ANSI_COLOR_RESET << std::endl;
+
+	ft::stack<int> stak;
+	std::stack<int> stak2;
+
 	stak.push(12);
 	stak.push(11);
 	stak.push(10);
+
+	stak2.push(12);
+	stak2.push(11);
+	stak2.push(10);
+
 	//empty.assign(5, 100);
 	//second.swap(empty);
-	second.erase(second.begin() + 9);
-	while(x < (int)second.size())
-	{
-		std::cout << second[x] << std::endl;
-		x++;
-	}
-	std::cout << "Mostramos aqui el top del stackk" << std::endl;
-	while(stak.size())
-	{
-		std::cout << stak.top() << std::endl;
-		stak.pop();
-	}
-
-	//empty = second;
+	checker(stak.empty() == stak2.empty(), "Stack empty()");
 	
-	std::cout << "este es size: " << second.size() << std::endl;
-	std::cout << "este es capacity: " << second.capacity() << std::endl;
-	std::cout << "este es el maz_size: " << second.max_size() << std::endl;
-	/*
-	std::cout << "este es el maz_size original: " << real.max_size() << std::endl;
-	std::cout << "este es el empty cuando no esta vacio: " << first.empty() << std::endl;
-	std::cout << "este es el empty cuando esta vacio: " << empty.empty() << std::endl;
-	first.assign(3,-12);
-	first.push_back(42);
-	std::cout << "este es el valor final despues de un asign " << first[9] << std::endl;
-	first.pop_back();
-	std::cout << "este es el valor final despues de un asign " << first[8] << std::endl;
-	try
-	{
-		std::cout << "este es el valor final despues de un asign " << first[9] << std::endl;
-	}
-	catch(...)
-	{
-		std::cerr << "--> Ninguno. Caiste en un error" << std::endl;
-	}
-	*/
+	checker(stak.size() == stak2.size(), "Stack size()");
+
+	checker(stak.top() == stak2.top(), "Stack top()");
+
+	stak.pop();
+	stak.pop();
+	stak.pop();
+
+	stak2.pop();
+	stak2.pop();
+	stak2.pop();
+
+	checker(stak.size() == stak2.size(), "Stack size() after pop all values");
+
 /*
-	std::map<int, int> new_map;
-
-	new_map.insert(std::make_pair(50, 20));
-	new_map.insert(std::make_pair(0, 10));
-	new_map.insert(std::make_pair(90, 30));
-	new_map.insert(std::make_pair(3, 40));
-	new_map.insert(std::make_pair(4, 50));
-	//std::cout << "Esto es new map: " << new_map[0] << std::endl;
-
-	std::map<int, int>::iterator it = new_map.begin();
-
-	std::cout << "Esto es iter: " << iter->first << std::endl;
-	x = 0;
-	while(it != new_map.end())
-	{
-		int num = it->first;
-		std::cout << "Esto es el for: " << num << std::endl;
-		it++;
-	}
+	stak.pop();
+	stak2.pop();
+	checker(stak.size() == stak2.size(), "Stack size() after pop all values + 1 --> segfault forced");
 */
 
-	ft::map<int,int> mymap;
+	std::cout << ANSI_COLOR_CYAN << "----  Start map  ----- \n" << ANSI_COLOR_RESET << std::endl;
 
+	ft::map<int,int> mymap;
+	std::map<int,int> mymap2;
 	//mymap.find('c');
 	
-	mymap.insert(std::make_pair(5, 500));
+	mymap.insert(std::make_pair(5, 100));
+	mymap2.insert(std::make_pair(5, 100));
 	std::cout << "----------------------------------" << std::endl;
 
 	mymap.insert(std::make_pair(6, 100));
+	mymap2.insert(std::make_pair(6, 100));
 	std::cout << "----------------------------------" << std::endl;
 	
 	mymap.insert(std::make_pair(4, 600));
+	mymap2.insert(std::make_pair(4, 600));
 		std::cout << "----------------------------------" << std::endl;
 	
-	ft::map<int,int>::iterator new_it = mymap.insert(std::make_pair(1, 100)).first ;
+	mymap.insert(std::make_pair(100, 600));
+	mymap2.insert(std::make_pair(100, 600));
 		std::cout << "----------------------------------" << std::endl;
 
 	mymap.insert(std::make_pair(100, 600));
+	mymap2.insert(std::make_pair(100, 600));
 		std::cout << "----------------------------------" << std::endl;
 	
-	ft::map<int,int>::iterator new_it2 = mymap.find(5);
 
-	//new_it++;
-	//int new_char = new_it->second;
-	//std::cout << "wololo"<< std::endl;
-	std::cout << "funciona el operator-> " << new_it->first << std::endl;
-	return(0 );
+	checker(mymap[5] == mymap2[5], "Map[5]");
+	checker(mymap[6] == mymap2[6], "Map[6]");
+	checker(mymap[4] == mymap2[4], "Map[4]");
+	checker(mymap[12] == mymap2[12], "Map[12]: without key 12");
 
-	//mymap.insert(std::make_pair('a', 100));	
-/*
-	int new_int = mymap.find('3')->second ;
-	std::cout << "wololo " << new_int << std::endl;
-*/
-	//std::cout << mymap['d'] << std::endl;
-	/*
-	std::cout << "da fuck ? \n";
-	mymap.insert(std::make_pair('e', 100));
-	mymap.insert(std::make_pair('z', 100));
-	//std::cout << mymap.find('d')->second << std::endl;	
+	ft::map<int,int>::iterator new_it = mymap.find(5);
+	std::map<int,int>::iterator new_it2 = mymap2.find(5);
+	checker(new_it->first == new_it2->first, "Comparing the return value of find(5)");
 
-	mymap.insert(std::make_pair('2', 500));
-	mymap.insert(std::make_pair('1', 500));
-	mymap.insert(std::make_pair(' ', 500));
-	
-	mymap['a'] = 200;
-	mymap['c'] = 300;
+	// std::cout << "----------------------------------" << std::endl;
 
-	// show content:
-	
-	for (std::map<char,int>::iterator it=mymap.begin(); it!=mymap.end(); it++)
-		std::cout << it->first.second << " => " << it->second << '\n';
-	*/
-	//map.printMap();
-	//map2 = map;
-	return (0);
+	return(0);
 }
 
 
