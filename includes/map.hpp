@@ -24,15 +24,11 @@ namespace ft
 			typedef typename Allocator::const_pointer const_pointer;
 			typedef Binary_tree<value_type, Compare>	BTree;
 			
-			//nodes
-
 			typedef Node<value_type>	node;
 			typedef node			*node_pointer;
-			// Falta aplicar iterator 
 
 			typedef typename ft::MapIterator<node, Compare>		iterator;
 			typedef typename ft::MapIterator<node, Compare>		const_iterator;
-
 			typedef std::reverse_iterator<iterator> reverse_iterator;	
 			typedef std::reverse_iterator<const iterator> const_reverse_iterator;
 
@@ -69,12 +65,10 @@ namespace ft
 
 			// DESTRUCTOR a revisar
 
-			/*
 			~map()
 			{
-				this->
+				this->clear();
 			};
-			*/
 
 			map& operator= (const map& x)
 			{
@@ -91,7 +85,7 @@ namespace ft
 
 			iterator begin()
 			{
-				return(iterator(this->tree->_last_node.left, this->tree->_last_node.right));
+				return(iterator(this->tree._last_node->left, this->tree._last_node->right));
 			}
 
 			const_iterator const_begin() const
@@ -152,8 +146,7 @@ namespace ft
 				return(this->tree.insertPair(val).first);
 			}
 
-			template <class InputIterator>
-			void insert (InputIterator first, InputIterator last)
+			void insert (iterator first, iterator last)
 			{
 				while(first != last)
 				{
@@ -163,23 +156,36 @@ namespace ft
 				}
 			}
 
-			/*
 			void erase (iterator position)
 			{
-				
+				this->erase((*(position)).first);
 			}
 			
 			size_type erase (const key_type& k)
 			{
+				iterator new_iter = this->find(k);
 
+				if (new_iter == this->end())
+					return(0);
+				this->tree.removeByKey(std::make_pair(k, mapped_type()));
+				return(1);
 			}
 
      		void erase (iterator first, iterator last)
 			 {
-
+				while(first != last)
+				{
+					this->erase((*(first)).first);
+					*first++;
+				}
 			 }
-			*/
 
+			void swap (map& x)
+			{
+				map tmp(*this);
+				*this = x;
+				x = tmp;
+			}
 			//operations
 
 			iterator find (const key_type& k)
@@ -189,9 +195,15 @@ namespace ft
 
 			const_iterator find (const key_type& k) const
 			{
-				return(const_iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->end()));
+				return(const_iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->tree._last_node));
 
 			}
+			void clear()
+			{
+				this->erase(this->begin(), this->end());
+			}
+
+			// overloads
 
 			bool operator ==(const map& e1)
 			{
@@ -290,17 +302,14 @@ namespace ft
 				tmp_node = this->root;
 				while (true)
 				{
-					std::cout << "explooooosion" << std::endl;
 					if (!root->left && !root->right && !root->pair.first)
 					{
-							std::cout << "root of roots" << std::endl;
 							tmp_node->pair.first = val.first;
 							tmp_node->pair.second = val.second;	
 							return(tmp_node);
 					}
 					if(val.first < root->pair.first)
 					{
-						std::cout << "crash left" << std::endl;
 						if (!root->left)
 						{
 							tmp_node->left = newNode(val.first, val.second, root);
@@ -316,9 +325,7 @@ namespace ft
 							tmp_node->right = newNode(val.first, val.second, root);
 							return(tmp_node->right);
 						}
-						std::cout << "crash right" << std::endl;
 						tmp_node(tmp_node->right);
-						std::cout << "crash right 2" << std::endl;
 						continue;
 					}
 				}

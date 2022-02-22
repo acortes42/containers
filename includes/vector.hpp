@@ -24,36 +24,51 @@ namespace ft
 			typedef typename allocator_type::size_type          size_type;
 			
 			explicit vector (const allocator_type& alloc2 = allocator_type())
-			{
-				alloc = alloc2;
-				firts_elem = u_nullptr;
-				last_elem = u_nullptr;
-				allocated_size = u_nullptr;
-			}
+			:
+				alloc(alloc2),
+				firts_elem(u_nullptr),
+				last_elem(u_nullptr),
+				allocated_size(u_nullptr)
+			{}
 
 			explicit vector (size_type n, const value_type& val = value_type(),
             	const allocator_type& alloc2 = allocator_type())
+			:
+				alloc(alloc2),
+				firts_elem(u_nullptr),
+				last_elem(u_nullptr),
+				allocated_size(u_nullptr)
 			{
-				alloc = alloc2;
-				firts_elem = u_nullptr;
-				last_elem = u_nullptr;
-
 				firts_elem = alloc.allocate(n);
-				last_elem = firts_elem;
 				allocated_size = firts_elem + n;
-				while(n > 0)
+				last_elem = firts_elem;
+				while(n--)
 				{
-					alloc.construct(last_elem, val); 
+					alloc.construct(last_elem, val);
 					last_elem++;
-					n--;
 				}
 			}
 
-			template<class InputIterator>
-         	vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type())
+         	vector (iterator first, iterator last, const allocator_type& alloc2 = allocator_type())
+			:
+			 	alloc(alloc2),
+				firts_elem(u_nullptr),
+				last_elem(u_nullptr),
+				allocated_size(u_nullptr)
+
 			{
-				(void)alloc;
-				this->insert(this->begin(), first, last);
+				size_type i = 0;
+				size_type n = this->distance(first, last);
+				firts_elem = alloc.allocate(n);
+				allocated_size = firts_elem + n;
+				last_elem = firts_elem;
+				while( i < n)
+				{
+					alloc.construct(last_elem, *first);
+					last_elem++;
+					*first++;
+					i++;
+				}
 			}
 			
 			vector (const vector& x)
@@ -63,7 +78,11 @@ namespace ft
 				last_elem(u_nullptr),
 				allocated_size(u_nullptr)
 			{
-				this->insert(this->begin(), x.begin(), x.end());
+				size_type n;
+
+				n = x.size();
+				for(size_type i = 0; i < n; i++)
+					this->push_back(x[i]);
 			}
 
 			// Destructor
@@ -80,15 +99,25 @@ namespace ft
 			
 			const_iterator begin() const{return(firts_elem);}
 
-			iterator end(){return(last_elem);}
+			iterator end() 
+			{
+				if(this->empty())
+					return(firts_elem);
+				return(last_elem);
+			}
 
-			const_iterator end() const{return(last_elem);}
+			const_iterator end() const
+			{
+				if(this->empty())
+					return(firts_elem);
+				return(last_elem);
+			}
 
 			reverse_iterator rbegin(){return(reverse_iterator(this->last_elem));}
 			const_reverse_iterator rbegin() const{return(const_reverse_iterator(this->end));}
 			
-			reverse_iterator rend() {return(reverse_iterator(this->firts_elem));}
-			const_reverse_iterator rend() const {return(const_reverse_iterator(this->firts_elem));}
+			reverse_iterator rend() {return(reverse_iterator(firts_elem));}
+			const_reverse_iterator rend() const {return(const_reverse_iterator(firts_elem));}
 
 			//Capacity
 
@@ -99,29 +128,32 @@ namespace ft
 
 			size_type distance (iterator first, iterator last)
 			{
-				size_type rtn = 0;
+				size_type n;
+
+				n = 0;
 				while (first != last)
 				{
 					first++;
-					rtn++;
+					n++;
 				}
-				return (rtn);
+				return (n);
 			}
 
 			size_type max_size() const{ return ((size_t)(-1) / sizeof(this)); }
 
 			void resize (size_type n, value_type val = value_type())
 			{
-				try
+				if(n > this->size())
 				{
-					while (n > size())
-					{
+					size_type i =  n - this->size();
+					while(i--)
 						this->push_back(val);
-					}
 				}
-				catch(...)
+				else
 				{
-					std::cerr << "Error in resize" << '\n';
+					size_type i = this->size() - n;
+					while(i--)
+						this->pop_back();
 				}
 			}
 
@@ -159,11 +191,39 @@ namespace ft
 
 			// Element access
 			
-			//vector &operator=(const vector& x){}
+			vector &operator=(const vector& x)
+			{
+				size_type n;
 
-			reference operator[] (size_type n) { return (*(firts_elem + n)); }
+				n = x.size();
+				if (this == &x)
+					return(*this);
+				this->clear();
+				for(size_type i = 0; i < n; i++)
+					this->push_back(x[i]);
+				return(*this);
+			}
 
-			const_reference operator[] (size_type n) const { return (*(firts_elem + n)); }
+			bool operator==(const vector& x)
+			{
+				if (this->size() != x.size())
+					return(false);
+				const_iterator new_other_begin = x.begin();
+				const_iterator new_other_end = x.end();
+				iterator new_this_begin = this->begin();
+				while(new_this_begin != this->end())
+				{
+					if (*new_other_begin == new_other_end || *new_this_begin != *new_other_begin)
+						return(false);
+					*new_other_begin++;
+					*new_this_begin++;
+				}
+				return (true);
+			}
+
+			reference operator[] (size_type n) { return (at(n)); }
+
+			const_reference operator[] (size_type n) const { return (at(n)); }
 			
 			reference at(size_type n)
 			{
@@ -181,45 +241,52 @@ namespace ft
 
 			reference front() { return (*firts_elem);}
 			const_reference front() const {return (*firts_elem);}
-			reference back() { return (firts_elem[this->size()]);}
+			reference back() { return (firts_elem[this->size() - 1]);}
 			const_reference back() const { return (*last_elem); }
 
 			//Modifiers
 
 			// Problema al hacer el overload en assign
 
-			template <class InputIterator>
-  			void assign (InputIterator first, InputIterator last)
-			{
-				this->clear();
-				while(first != last)
-				{
-					alloc.construct(last_elem, first); 
-					last_elem++;
-					first++;
-				}
-			};
-			
 			void assign (size_type n, const value_type& val)
 			{
-				size_type i = 0;
 				this->clear();
-				while (i++ < n)
-					push_back(val);
+
+				this->firts_elem = alloc.allocate(n);
+				this->allocated_size = this->firts_elem + n;
+				this->last_elem = this->firts_elem;
+				while(n--)
+				{
+					alloc.construct(last_elem, val);
+					this->last_elem++;
+				}
 			}
+
+  			void assign (iterator first, iterator last)
+			{
+				this->clear();
+				size_type i = 0;
+				size_type n = this->distance(first, last);
+				firts_elem = alloc.allocate(n);
+				allocated_size = firts_elem + n;
+				last_elem = firts_elem;
+				while( i < n)
+				{
+					alloc.construct(last_elem, *first);
+					last_elem++;
+					*first++;
+					i++;
+				}
+			};
 
 			void push_back(T value)
 			{
-				size_type n;
-				if(last_elem == allocated_size)
+				if (last_elem == allocated_size)
 				{
-					if(this->capacity() > 0)
-						n = this->size() * 2;
-					else
-						n = 1;
-					this->reserve(n);
+					int next_capacity = (this->size() > 0) ? (int)(this->size() * 2) : 1;
+					this->reserve(next_capacity);
 				}
-				alloc.construct(last_elem, value); 
+				alloc.construct(last_elem, value);
 				last_elem++;
 				
 			}
@@ -228,38 +295,42 @@ namespace ft
 			{
 				alloc.destroy(&this->back());
 				last_elem--;
-				
 			}
 
 			iterator insert (iterator position, const value_type& val)
-			{
-				std::cout << "insert" << std::endl;
+			{					
 				size_type pos_len = &(*position) - firts_elem;
 				pointer newfirts_elem = pointer();
 				pointer newlast_elem = pointer();
 				pointer newcapacity = pointer();
-
-				int next_capacity = 0;
-				if (size_type(allocated_size - last_elem) >= 1)
-					next_capacity = this->capacity();
+	
+				size_type next_capacity = 0;
+				if (size_type(allocated_size - last_elem) <= 1)
+				{
+					for(size_type i = 0; i < pos_len; i++)
+						alloc.construct(last_elem - i, *(last_elem - i - 1));
+					last_elem++;
+					alloc.construct(last_elem - pos_len, val);
+				}
 				else
-					next_capacity = (this->capacity() * 2 > 0) ? this->capacity() * 2 : 1; 
-				newfirts_elem = alloc.allocate( next_capacity );
-				newlast_elem = newfirts_elem + this->size() + 1;
-				newcapacity = newfirts_elem + next_capacity;
-				for (size_type i = 0; i < pos_len; i++)
-					alloc.construct(newfirts_elem + i, *(firts_elem + i));
-				alloc.construct(newfirts_elem + pos_len, val);
-				for (size_type j = 0; j < this->size() - pos_len; j++)
-					alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
-
-				for (size_type l = 0; l < this->size(); l++)
-					alloc.destroy(firts_elem + l);
-				if (firts_elem)
-					alloc.deallocate(firts_elem, this->capacity());
-				firts_elem = newfirts_elem;
-				last_elem = newlast_elem;
-				allocated_size = newcapacity;
+				{
+					next_capacity = (this->capacity() * 2 > 0) ? this->capacity() * 2 : 1;
+					newfirts_elem = alloc.allocate( next_capacity );
+					newlast_elem = newfirts_elem + this->size() + 1;
+					newcapacity = newfirts_elem + next_capacity;
+					for (size_type i = 0; i < pos_len; i++)
+						alloc.construct(newfirts_elem + i, *(firts_elem + i));
+					alloc.construct(newfirts_elem + pos_len, val);
+					for (size_type j = 0; j < this->size() - pos_len; j++)
+						alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
+					for (size_type l = 0; l < this->size(); l++)
+						alloc.destroy(firts_elem + l);
+					if (firts_elem)
+						alloc.deallocate(firts_elem, this->capacity());
+					firts_elem = newfirts_elem;
+					last_elem = newlast_elem;
+					allocated_size = newcapacity;
+				}
 				return (iterator(firts_elem + pos_len));
 			}
 	
@@ -267,7 +338,6 @@ namespace ft
 
 			void insert (iterator position, size_type n, const value_type& val)
 			{
-				std::cout << "fill" << std::endl;
 				size_type pos_len = &(*position) - firts_elem;
 				pointer newfirts_elem = pointer();
 				pointer newlast_elem = pointer();
@@ -275,16 +345,19 @@ namespace ft
 				size_type capacity = this->capacity();
 
 				size_type next_capacity = 0;
-				while(next_capacity < (capacity + n))
-				{
-					if (size_type(allocated_size - last_elem) >= n)
-						next_capacity = capacity;
-					else
-						next_capacity = (capacity * 2 > 0) ? capacity * 2 : 1; 
-					std::cout << "next_capacity: " << next_capacity << ", capacity: " << capacity << std::endl;
-
-				}
 				
+				if (size_type(allocated_size - last_elem + n) >= 1)
+				{
+					for (size_type i = 0; i < this->size() - pos_len; i++)
+						alloc.construct(last_elem - i + (n - 1), *(last_elem - i - 1));
+					last_elem += n;
+					while (n)
+					{
+						alloc.construct(&(*position) + (n - 1), val);
+						n--;
+					}
+				}
+				next_capacity = (capacity * 2 > 0) ? capacity * 2 : 1; 
 				newfirts_elem = alloc.allocate( next_capacity );
 				newlast_elem = newfirts_elem + this->size() + n;
 				newcapacity = newfirts_elem + next_capacity;
@@ -294,7 +367,6 @@ namespace ft
 					alloc.construct(newfirts_elem + pos_len + i, val);
 				for (size_type j = 0; j < this->size() - pos_len; j++)
 					alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
-
 				for (size_type l = 0; l < this->size(); l++)
 					alloc.destroy(firts_elem + l);
 				if (firts_elem)
@@ -306,12 +378,50 @@ namespace ft
 
     		void insert (iterator position, iterator first, iterator last)
 			{
-				std::cout << "range" << std::endl;
-				(void)position;
-				difference_type n = this->distance(first, last);
-				while (n--)
-					this->insert(this->begin(), *(first++));
+				size_type pos_len = &(*position) - firts_elem;
+				pointer newfirts_elem = pointer();
+				pointer newlast_elem = pointer();
+				pointer newcapacity = pointer();
+				size_type capacity;
+				size_type next_capacity;
+				size_type n;
 
+
+				capacity = this->capacity();
+				next_capacity = 0;
+				n = this->distance(first, last);
+				if (size_type(allocated_size - last_elem + n) >= 1)
+				{
+					for (size_type i = 0; i < this->size() - pos_len; i++)
+						alloc.construct(last_elem - i + (n - 1), *(last_elem - i - 1));
+					last_elem += n;
+					while (first != last)
+					{
+						alloc.construct(&(*position), *first);
+						first++;
+						position++;
+					}
+				}
+				next_capacity = (capacity * 2 > 0) ? capacity * 2 : 1;
+				newfirts_elem = alloc.allocate( next_capacity );
+				newlast_elem = newfirts_elem + this->size() + n;
+				newcapacity = newfirts_elem + next_capacity;
+				for (size_type i = 0; i < pos_len; i++)
+					alloc.construct(newfirts_elem + i, *(firts_elem + i));
+				for (size_type i = 0; i < n; i++)
+				{
+					alloc.construct(newfirts_elem + pos_len + i, *first);
+					first++;
+				}
+				for (size_type j = 0; j < this->size() - pos_len; j++)
+					alloc.construct(newlast_elem - j - 1, *(last_elem - j - 1));
+				for (size_type l = 0; l < this->size(); l++)
+					alloc.destroy(firts_elem + l);
+				if (firts_elem)
+					alloc.deallocate(firts_elem, capacity);
+				firts_elem = newfirts_elem;
+				last_elem = newlast_elem;
+				allocated_size = newcapacity;
 			}
 
 			iterator erase (iterator position)

@@ -88,6 +88,7 @@ class Binary_tree
 					else
 						node = node->right;
 				}
+
 				return (node);
 			}
 

@@ -179,31 +179,10 @@ namespace ft
 
 			MapIterator& operator++(void)
 			{
-				T* cursor = _node;
+				T *cursor = _node->parent->left;
 
-				if (_node->right == _last_node)
-				{
-					cursor = _node->parent;
-					while (cursor != _last_node
-						&& _comp(cursor->pair.first, _node->pair.first))
-						cursor = cursor->parent;
-					_node = cursor;
-				}
-				else if (cursor == _last_node)
-					_node = _last_node->right;
-				else
-				{
-					cursor = _node->right;
-					if (cursor == _last_node->parent
-						&& cursor->right == _last_node)
-						_node = cursor;
-					else
-					{
-						while (cursor->left != _last_node)
-							cursor = cursor->left;
-					}
-					_node = cursor;
-				}
+				cursor = cursor->parent;
+				_node = cursor;
 				return (*this);
 			}
 
