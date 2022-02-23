@@ -272,8 +272,8 @@ int main()
 	std::map<int,int> mymap2;
 	//mymap.find('c');
 	
-	mymap.insert(std::make_pair(5, 100));
-	mymap2.insert(std::make_pair(5, 100));
+	mymap.insert(std::make_pair(982, 20));
+	mymap2.insert(std::make_pair(982, 20));
 	std::cout << "----------------------------------" << std::endl;
 
 	mymap.insert(std::make_pair(6, 100));
@@ -298,7 +298,7 @@ int main()
 	checker(mymap[4] == mymap2[4], "Map[4]");
 	checker(mymap[12] == mymap2[12], "Map[12]: without key 12");
 
-	checker(mymap.erase(6) == mymap2.erase(6), "Map: erase a value from key");
+	//checker(mymap.erase(6) == mymap2.erase(6), "Map: erase a value from key");
 	//mymap.erase(6);
 	//mymap2.erase(6);
 
@@ -310,12 +310,41 @@ int main()
 
 	 std::cout << "----------------------------------" << std::endl;
 
-	for (std::map<int,int>::iterator mymap_it = mymap2.begin(); mymap_it != mymap2.end(); mymap_it++)
+	mymap.insert(std::make_pair(43, 123));
+	mymap2.insert(std::make_pair(43, 123));
+
+	mymap.insert(std::make_pair(23, 1232));
+	mymap2.insert(std::make_pair(23, 1232));
+
+	mymap.insert(std::make_pair(4, 12));
+	mymap2.insert(std::make_pair(100, 12));
+
+	mymap.insert(std::make_pair(3, 12));
+	mymap2.insert(std::make_pair(3, 12));
+
+	mymap.insert(std::make_pair(2, 12));
+	mymap2.insert(std::make_pair(2, 12));
+
+
+	std::cout << "----------From rbegin to rend----------" << std::endl;
+
+	for (std::map<int,int>::reverse_iterator mymap_it = mymap2.rbegin(); mymap_it != mymap2.rend(); ++mymap_it)
     	std::cout << ANSI_COLOR_GREEN << mymap_it->first << " => " << mymap_it->second << '\n';
 	
-	//for (ft::map<int,int>::iterator mymap_it2 = mymap.begin(); mymap_it2 != mymap.end(); mymap_it2++)
-    //	std::cout << ANSI_COLOR_MAGENTA << mymap_it2->first << " => " << mymap_it2->second << '\n';
+	for (ft::map<int,int>::reverse_iterator mymap_it2 = mymap.rbegin(); mymap_it2 != mymap.rend(); ++mymap_it2)
+    	std::cout << ANSI_COLOR_MAGENTA << mymap_it2->first << " => " << mymap_it2->second << '\n';
 
+	std::cout << "----------From begin to end----------" << std::endl;
+
+
+	for (std::map<int,int>::iterator mymap_it = mymap2.begin(); mymap_it != mymap2.end(); ++mymap_it)
+    	std::cout << ANSI_COLOR_GREEN << mymap_it->first << " => " << mymap_it->second << '\n';
+
+	for (ft::map<int,int>::iterator mymap_it2 = mymap.begin(); mymap_it2 != mymap.end(); ++mymap_it2)
+    	std::cout << ANSI_COLOR_MAGENTA << mymap_it2->first << " => " << mymap_it2->second << '\n';
+
+
+	std::cout << "----------End of main----------" << std::endl;
 	return(0);
 }
 

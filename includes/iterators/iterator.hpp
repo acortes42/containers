@@ -13,8 +13,8 @@ namespace ft
                 return (0);
             }
 
-            template<class C, class T>
-            operator T C::*() const
+            template<class T1, class T2>
+            operator T2 T1::*() const
             {
                 return (0);
             }

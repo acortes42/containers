@@ -27,10 +27,10 @@ namespace ft
 			typedef Node<value_type>	node;
 			typedef node			*node_pointer;
 
-			typedef typename ft::MapIterator<node, Compare>		iterator;
-			typedef typename ft::MapIterator<node, Compare>		const_iterator;
-			typedef std::reverse_iterator<iterator> reverse_iterator;	
-			typedef std::reverse_iterator<const iterator> const_reverse_iterator;
+			typedef typename ft::MapIterator<node, Compare>			iterator;
+			typedef typename ft::MapIterator<node, Compare>			const_iterator;
+			typedef typename ft::ReverseMapIterator<node, Compare>	reverse_iterator;	
+			typedef typename ft::ReverseMapIterator<node, Compare>	const_reverse_iterator;
 
 
 			//constructors
@@ -85,12 +85,22 @@ namespace ft
 
 			iterator begin()
 			{
-				return(iterator(this->tree._last_node->left, this->tree._last_node->right));
+				return(iterator(this->tree._last_node->left, this->tree._last_node));
 			}
 
 			const_iterator const_begin() const
 			{
-				return(const_iterator(this->tree->left, this->tree->right));
+				return(const_iterator(this->tree._last_node->left, this->tree._last_node));
+			}
+
+			reverse_iterator rbegin()
+			{
+				return(reverse_iterator(this->tree._last_node, this->tree._last_node));
+			}
+
+			const_reverse_iterator const_rbegin()
+			{
+				return(const_reverse_iterator(this->tree._last_node, this->tree._last_node));
 			}
 
 			iterator end()
@@ -101,6 +111,16 @@ namespace ft
 			const_iterator const_end() const
 			{
 				return(const_iterator(this->tree._last_node, this->tree._last_node));
+			}
+
+			reverse_iterator rend()
+			{
+				return(reverse_iterator(this->tree._last_node->left, this->tree._last_node));
+			}
+
+			const_reverse_iterator const_rend() const
+			{
+				return(const_reverse_iterator(this->tree._last_node->left, this->tree._last_node));
 			}
 
 			// capacity
@@ -173,10 +193,10 @@ namespace ft
 
      		void erase (iterator first, iterator last)
 			 {
-				while(first != last)
+				while(last != first)
 				{
-					this->erase((*(first)).first);
-					*first++;
+					this->erase((*(last)).first);
+					*last--;
 				}
 			 }
 
@@ -228,109 +248,6 @@ namespace ft
 			allocator_type	allocated;
 			BTree			tree;
 			size_type		map_size;
-
-			std::pair<iterator, int> find_this(const key_type& firstValue)
-			{	
-				int ret_int;
-				node tmp_node;
-
-				tmp_node = *this->root;
-				ret_int = 1;
-				while(true)
-				{
-					if (tmp_node.pair.first == firstValue)
-					{
-						std::cout << "equal value"<< std::endl;
-						ret_int = 0;
-						break;
-					}
-					if (firstValue < tmp_node.pair.first && tmp_node.left)
-					{
-						tmp_node = *tmp_node.left;
-						std::cout << "tmp_node.left tmp_node.pair.first of : " <<  tmp_node.pair.first << std::endl;
-						continue;
-					}
-					else if (firstValue > tmp_node.pair.first && tmp_node.right )
-					{
-						tmp_node = *tmp_node.right;
-						std::cout << "----> rightValue: : " <<  tmp_node.pair.first << std::endl;
-						continue;
-					}
-					break;
-				}
-				
-				std::cout << "escape with tmp_node.pair.first of : " <<  tmp_node.pair.first << std::endl;
-				node_pointer tmp_node_pointer = &tmp_node;
-				return(std::make_pair(iterator(tmp_node_pointer), ret_int));
-			}	
-
-/*
-			node_pointer insertNode(node_pointer root, const value_type& val)
-			{
-				if (!root->left && !root->right && !root->pair.first)
-				{
-						std::cout << "root of roots" << std::endl;
-						root->pair.first = val.first;
-						root->pair.second = val.second;	
-						return(root);
-				}
-				if(val.first < root->pair.first)
-				{
-					if (!root->left)
-					{
-						root->left = newNode(val.first, val.second, root);
-						return(root->left);
-					}
-					this->insertNode(root->left, val);
-				}
-				else if(val.first > root->pair.first)
-				{
-					if (!root->right)
-					{
-						root->right = newNode(val.first, val.second, root);
-						return(root->right);
-					}
-					this->insertNode(root->right, val);
-				}
-				return(root);
-			}
-*/
-			node_pointer insertNode(node_pointer root, const value_type& val)
-			{
-				node_pointer tmp_node;
-
-				tmp_node = this->root;
-				while (true)
-				{
-					if (!root->left && !root->right && !root->pair.first)
-					{
-							tmp_node->pair.first = val.first;
-							tmp_node->pair.second = val.second;	
-							return(tmp_node);
-					}
-					if(val.first < root->pair.first)
-					{
-						if (!root->left)
-						{
-							tmp_node->left = newNode(val.first, val.second, root);
-							return(tmp_node->left);
-						}
-						tmp_node = tmp_node->left;
-						continue;
-					}
-					else if(val.first > root->pair.first)
-					{
-						if (!root->right)
-						{
-							tmp_node->right = newNode(val.first, val.second, root);
-							return(tmp_node->right);
-						}
-						tmp_node(tmp_node->right);
-						continue;
-					}
-				}
-				return(tmp_node);
-			}
 	};
 
 }

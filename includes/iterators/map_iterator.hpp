@@ -23,14 +23,6 @@ namespace ft
 				parent(u_nullptr)
 			{}
 
-			Node (const T& t)
-			:
-				pair(t),
-				parent(u_nullptr),
-				left(u_nullptr),
-				right(u_nullptr)
-			{}
-
             Node (Node	*parent, Node	*left, Node	*right)
 			:
 				pair(),
@@ -39,7 +31,7 @@ namespace ft
 				parent(parent)
 			{}
 
-			Node (const T& t, Node	*parent, Node	*left, Node	*right)
+			Node (const T& t, Node	*parent = u_nullptr, Node	*left = u_nullptr, Node	*right = u_nullptr)
 			:
 				pair(t),
 				left(left),
@@ -179,10 +171,31 @@ namespace ft
 
 			MapIterator& operator++(void)
 			{
-				T *cursor = _node->parent->left;
+				T* cursor = _node;
 
-				cursor = cursor->parent;
-				_node = cursor;
+				if (_node->right == _last_node)
+				{
+					cursor = _node->parent;
+					while (cursor != _last_node
+						&& _comp(cursor->pair.first, _node->pair.first))
+						cursor = cursor->parent;
+					_node = cursor;
+				}
+				else if (cursor == _last_node)
+					_node = _last_node->right;
+				else
+				{
+					cursor = _node->right;
+					if (cursor == _last_node->parent
+						&& cursor->right == _last_node)
+						_node = cursor;
+					else
+					{
+						while (cursor->left != _last_node)
+							cursor = cursor->left;
+					}
+					_node = cursor;
+				}
 				return (*this);
 			}
 
@@ -234,6 +247,141 @@ namespace ft
 			T *			_last_node;
 			Compare     _comp;
 	};
-};	
 
+	template <typename T, class Compare >
+		class ReverseMapIterator : ft::iterator<ft::bidirectional_iterator_tag, T>
+		{
+			public :
+
+				typedef typename T::value_type    value_type;
+				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::iterator_category iterator_category;
+				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::difference_type   difference_type;
+				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::pointer   pointer;
+				typedef typename ft::iterator<ft::bidirectional_iterator_tag, value_type>::reference reference;
+
+				ReverseMapIterator(const Compare& comp = Compare())
+				:
+					_node(),
+					_last_node(),
+					_comp(comp)
+				{}
+
+				ReverseMapIterator(T * node_p, T * last_node,
+							const Compare& comp = Compare())
+				:
+					_node(node_p),
+					_last_node(last_node),
+					_comp(comp)
+				{}
+
+				ReverseMapIterator(const ReverseMapIterator& bst_it)
+				:
+					_node(bst_it._node),
+					_last_node(bst_it._last_node),
+					_comp()
+				{}
+
+				virtual ~ReverseMapIterator() { }
+
+				ReverseMapIterator &operator=(const ReverseMapIterator& bst_it)
+				{
+					if (*this == bst_it)
+						return (*this);
+					this->_node = bst_it._node;
+					this->_last_node = bst_it._last_node;
+					this->_comp = bst_it._comp;
+					return (*this);
+				}
+
+				bool operator==(const ReverseMapIterator& bst_it)
+				{ return (this->_node == bst_it._node); }
+
+				bool operator!=(const ReverseMapIterator& bst_it)
+				{ return (this->_node != bst_it._node); }
+
+				reference operator*() const
+				{ return (this->_node->pair); }
+
+				pointer operator->() const
+				{ return (&this->_node->pair); }
+
+				ReverseMapIterator& operator--(void)
+				{
+					T* cursor = _node;
+
+					if (_node->right == _last_node)
+					{
+						cursor = _node->parent;
+						while (cursor != _last_node
+							&& _comp(cursor->pair.first, _node->pair.first))
+							cursor = cursor->parent;
+						_node = cursor;
+					}
+					else if (cursor == _last_node)
+						_node = _last_node->right;
+					else
+					{
+						cursor = _node->right;
+						if (cursor == _last_node->parent
+							&& cursor->right == _last_node)
+							_node = cursor;
+						else
+						{
+							while (cursor->left != _last_node)
+								cursor = cursor->left;
+						}
+						_node = cursor;
+					}
+					return (*this);
+				}
+
+				ReverseMapIterator operator--(int)
+				{
+					ReverseMapIterator tmp(*this);
+					operator--();
+					return (tmp);
+				}
+
+				ReverseMapIterator& operator++(void)
+				{
+					T* cursor = _node;
+
+					if (_node->left == _last_node)
+					{
+						cursor = _node->parent;
+						while (cursor != _last_node
+							&& !_comp(cursor->pair.first, _node->pair.first))
+							cursor = cursor->parent;
+						_node = cursor;
+					}
+					else if (cursor == _last_node)
+						_node = _last_node->right;
+					else
+					{
+						cursor = _node->left;
+						if (cursor == _last_node->parent
+							&& cursor->left == _last_node)
+							_node = cursor;
+						else
+						{
+							while (cursor->right != _last_node)
+								cursor = cursor->right;
+						}
+						_node = cursor;
+					}
+					return (*this);
+				}
+
+				ReverseMapIterator operator++(int)
+				{
+					ReverseMapIterator tmp(*this);
+					operator++();
+					return (tmp);
+				}            
+
+				T *			_node;
+				T *			_last_node;
+				Compare     _comp;
+		};
+}
 #endif
