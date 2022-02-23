@@ -342,15 +342,62 @@ int main()
 
 	for (ft::map<int,int>::iterator mymap_it2 = mymap.begin(); mymap_it2 != mymap.end(); ++mymap_it2)
     	std::cout << ANSI_COLOR_MAGENTA << mymap_it2->first << " => " << mymap_it2->second << '\n';
+	
+	std::cout << "------------------------------------" << std::endl;
 
+	checker(mymap.count(50) == mymap2.count(50), "Map count V1");
+	checker(mymap.count(2) == mymap2.count(2), "Map count V2");
 
+	mymap.value_comp();
+	mymap2.value_comp();
+
+	ft::map<int,int>::key_compare mycomp = mymap.key_comp();
+	std::map<int,int>::key_compare mycomp2 = mymap2.key_comp();
+
+	checker(mycomp(1,21) == mycomp2(1,21), "Map key_comp");
+
+	ft::map<char,int>::iterator itlow,itup;
+
+	//itlow=mymap.lower_bound ('b');  // itlow points to b
+  	//itup=mymap.upper_bound ('d');   // itup points to e (not d!)
+
+	
+
+	std::cout << "Upper_bound of 9  in std  " << mymap2.upper_bound(9)->first  <<  std::endl;
+	std::cout << "Upper_bound of 9  in ft  " << mymap.upper_bound(9)->first  << std::endl;
+
+	checker(mymap.upper_bound(32)->first == mymap2.upper_bound(32)->first, "Map upper_bound");
+	checker(mymap.lower_bound(32)->first == mymap2.lower_bound(32)->first, "Map lower_bound");
+
+	std::pair<ft::map<int,int>::iterator,ft::map<int,int>::iterator> ret;
+  	std::pair<std::map<int,int>::iterator,std::map<int,int>::iterator> ret2;
+
+	ret = mymap.equal_range(32);
+	ret2 = mymap2.equal_range(32);
+
+	checker(ret.first->first == ret2.first->first, "Map equal_range first");
+	checker(ret.second->first == ret2.second->first, "Map equal_range second");
+
+	// (Exemple copied from cplusplus ) Allocate an array of 5 elements using mymap's allocator:
+
+	std::pair<const int,int>* p;
+	std::pair<const int,int>* p2;
+
+	p= mymap.get_allocator().allocate(5);
+	p2= mymap2.get_allocator().allocate(5);
+
+	int psize = sizeof(ft::map<int,int>::value_type)*5;
+	int psize2 = sizeof(std::map<int,int>::value_type)*5;
+
+  	std::cout << "The allocated array has a size of " << psize << " bytes.\n";
+	std::cout << "The allocated array has a size of " << psize2 << " bytes.\n";
+
+	mymap.get_allocator().deallocate(p,5);
+	mymap.get_allocator().deallocate(p2,5);
+	checker(psize == psize2, "Map get_allocator");
 	std::cout << "----------End of main----------" << std::endl;
 	return(0);
 }
-
-
-
-
 
 /*
 #if 1 //CREATE A REAL STL EXAMPLE

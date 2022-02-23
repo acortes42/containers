@@ -32,6 +32,26 @@ namespace ft
 			typedef typename ft::ReverseMapIterator<node, Compare>	reverse_iterator;	
 			typedef typename ft::ReverseMapIterator<node, Compare>	const_reverse_iterator;
 
+			class value_compare
+			{   
+				protected:
+
+					Compare comp;
+					
+					
+				public:
+
+				value_compare (Compare c) : comp(c) {}
+
+				typedef bool result_type;
+				typedef value_type first_argument_type;
+				typedef value_type second_argument_type;
+
+				bool operator() (const value_type& x, const value_type& y) const
+				{
+					return comp(x.first, y.first);
+				};
+			};
 
 			//constructors
 
@@ -40,8 +60,7 @@ namespace ft
 			:
 				comparation(comp), 
 				allocated(alloc),
-				tree(),
-				map_size(0)
+				tree()
 			{}
 
 			template <class InputIterator>  map (InputIterator first, InputIterator last,
@@ -49,8 +68,7 @@ namespace ft
 			:
 				tree(),
 				comparation(comp), 
-				allocated(alloc),
-				map_size(0)
+				allocated(alloc)
 			{
 				tree->insert(std::make_pair(iterator(first, last), true));
 			}
@@ -60,7 +78,6 @@ namespace ft
 				this->root = x.root;
 				this->allocated = x.allocated;
 				this->comparation = x.comparation;
-				this->map_size = x.map_size;
 			}
 
 			// DESTRUCTOR a revisar
@@ -78,7 +95,6 @@ namespace ft
 				this->root = x.root;
 				this->allocated = x.allocated;
 				this->comparation = x.comparation;
-				this->map_size = x.map_size;
 			}
 			
 			// Right to the left, or right and right to the left...right?
@@ -134,7 +150,7 @@ namespace ft
 
 			size_type size() const
 			{
-				return(map_size);
+				return(this->tree._last_node->pair.first);
 			}
 
 			size_type	max_size() const
@@ -146,9 +162,9 @@ namespace ft
 
 			mapped_type& operator[] (const key_type& k)
 			{
-				iterator new_iter = this->find(k);
+				const_iterator new_iter = this->find(k);
 
-				if (new_iter == this->end())
+				if (new_iter == this->const_end())
 					this->insert(std::make_pair(k, mapped_type()));
 				return((*new_iter).second);
 			}
@@ -171,7 +187,6 @@ namespace ft
 				while(first != last)
 				{
 					tree->insert(*first);
-					this->map_size++;
 					first++;
 				}
 			}
@@ -206,7 +221,25 @@ namespace ft
 				*this = x;
 				x = tmp;
 			}
-			//operations
+
+			void clear()
+			{
+				this->erase(this->begin(), this->end());
+			}
+
+			//	Observers
+
+			key_compare key_comp() const
+			{
+				return(key_compare());
+			}
+
+			value_compare value_comp() const
+			{
+				return(value_compare(key_comp()));
+			}
+
+			//	Operations
 
 			iterator find (const key_type& k)
 			{
@@ -216,12 +249,71 @@ namespace ft
 			const_iterator find (const key_type& k) const
 			{
 				return(const_iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->tree._last_node));
+			}
 
-			}
-			void clear()
+			size_type count (const key_type& k) const
 			{
-				this->erase(this->begin(), this->end());
+				const_iterator new_iter = this->find(k);
+				
+				if (new_iter == this->const_end())
+					return (0);
+				return(1);
 			}
+
+			iterator lower_bound (const key_type& k)
+			{
+				iterator start = this->begin();
+				iterator end = this->end();
+
+				while(start != end)
+				{
+					if (comparation((*start).first, k) == false)
+						break;
+					start++;
+				}
+				return(start);
+			}
+			const_iterator lower_bound (const key_type& k) const
+			{
+				return(const_iterator(this->lower_bound(k)));
+			}
+
+
+			iterator upper_bound (const key_type& k)
+			{
+				iterator start = this->begin();
+				iterator end = this->end();
+
+				while(start != end)
+				{
+					if (comparation(k, (*start).first))
+						break;
+					start++;
+				}
+				return(start);
+			}
+			const_iterator upper_bound (const key_type& k) const
+			{
+				return(const_iterator(this->upper_bound(k)));
+			}
+
+			std::pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+			{
+				return(std::make_pair(const_iterator(lower_bound(k)), const_iterator(upper_bound(k))));
+			}
+			
+			std::pair<iterator,iterator> equal_range (const key_type& k)
+			{
+				return(std::make_pair(iterator(lower_bound(k)), iterator(upper_bound(k))));
+			}
+
+			// Allocator
+
+			allocator_type get_allocator() const
+			{
+				return(this->allocated);
+			}
+
 
 			// overloads
 
@@ -247,7 +339,6 @@ namespace ft
 			Compare			comparation;
 			allocator_type	allocated;
 			BTree			tree;
-			size_type		map_size;
 	};
 
 }

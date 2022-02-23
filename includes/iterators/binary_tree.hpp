@@ -92,6 +92,23 @@ class Binary_tree
 				return (node);
 			}
 
+			node_pointer searchByKey(value_type to_remove) const
+			{
+				node_pointer node = _last_node->parent;
+
+				while (node != _last_node)
+				{
+					if (node->pair.first == to_remove.first)
+						return (node);
+					if (node->pair.first > to_remove.first)
+						node = node->left;
+					else
+						node = node->right;
+				}
+
+				return (node);
+			}
+
 			void swap(Binary_tree& x)
 			{
 				if (x == *this)
