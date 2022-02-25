@@ -10,19 +10,26 @@ namespace ft
 	{
 		public:
 
-			typedef T                                           value_type;
-			typedef Alloc                                       allocator_type;
-			typedef typename allocator_type::reference          reference;
-			typedef typename allocator_type::const_reference    const_reference;
-			typedef typename allocator_type::pointer            pointer;
-			typedef typename allocator_type::const_pointer      const_pointer;
-			typedef ft::random_access_iterator<value_type>      iterator;
-			typedef ft::random_access_iterator<const value_type>  const_iterator;
-			typedef ft::reverse_iterator<iterator>             reverse_iterator;
-			typedef ft::reverse_iterator<const_iterator>       const_reverse_iterator;
-			typedef typename ft::iterator_traits<iterator>::difference_type    difference_type; 
-			typedef typename allocator_type::size_type          size_type;
+			typedef T                                           	value_type;
+			typedef Alloc                                      		allocator_type;
+			typedef typename allocator_type::reference          	reference;
+			typedef typename allocator_type::const_reference    	const_reference;
+			typedef typename allocator_type::pointer            	pointer;
+			typedef typename allocator_type::const_pointer      	const_pointer;
+			typedef ft::random_access_iterator<value_type>      	iterator;
+			typedef ft::random_access_iterator<const value_type>	const_iterator;
+			typedef ft::reverse_iterator<iterator>             		reverse_iterator;
+			typedef ft::reverse_iterator<const_iterator>       		const_reverse_iterator;
+			typedef typename ft::iterator_traits<iterator>::difference_type	difference_type; 
+			typedef typename allocator_type::size_type         		size_type;
 			
+			
+			/*************************************
+
+					Member functions
+
+			**************************************/
+
 			explicit vector (const allocator_type& alloc2 = allocator_type())
 			:
 				alloc(alloc2),
@@ -85,15 +92,18 @@ namespace ft
 					this->push_back(x[i]);
 			}
 
-			// Destructor
-
 			~vector<T>()
 			{
 				this->clear();
         		alloc.deallocate(this->firts_elem, this->capacity());
 			};
 
-			// Iterators
+			
+			/*************************************
+
+						Iterators
+
+			**************************************/
 
 			iterator begin(){return(firts_elem);}
 			
@@ -119,7 +129,13 @@ namespace ft
 			reverse_iterator rend() {return(reverse_iterator(firts_elem));}
 			const_reverse_iterator rend() const {return(const_reverse_iterator(firts_elem));}
 
-			//Capacity
+
+			/*************************************
+
+						Capacity
+
+			**************************************/
+
 
 			size_type size(void) const
 			{
@@ -189,7 +205,12 @@ namespace ft
 				alloc.deallocate(old_first - old_size, oldallocated_size);
 			}
 
-			// Element access
+			
+			/*************************************
+
+						Element access
+
+			**************************************/
 			
 			vector &operator=(const vector& x)
 			{
@@ -202,23 +223,6 @@ namespace ft
 				for(size_type i = 0; i < n; i++)
 					this->push_back(x[i]);
 				return(*this);
-			}
-
-			bool operator==(const vector& x)
-			{
-				if (this->size() != x.size())
-					return(false);
-				const_iterator new_other_begin = x.begin();
-				const_iterator new_other_end = x.end();
-				iterator new_this_begin = this->begin();
-				while(new_this_begin != this->end())
-				{
-					if (*new_other_begin == new_other_end || *new_this_begin != *new_other_begin)
-						return(false);
-					*new_other_begin++;
-					*new_this_begin++;
-				}
-				return (true);
 			}
 
 			reference operator[] (size_type n) { return (at(n)); }
@@ -244,9 +248,12 @@ namespace ft
 			reference back() { return (firts_elem[this->size() - 1]);}
 			const_reference back() const { return (*last_elem); }
 
-			//Modifiers
+			
+			/*************************************
 
-			// Problema al hacer el overload en assign
+						Modifiers
+
+			**************************************/
 
 			void assign (size_type n, const value_type& val)
 			{
@@ -334,8 +341,6 @@ namespace ft
 				return (iterator(firts_elem + pos_len));
 			}
 	
-			// Por ahora, insert no entra aqui cuando deberia. Se va al de abajo. De momento, cambie el de abajo a iterator. Revisar
-
 			void insert (iterator position, size_type n, const value_type& val)
 			{
 				size_type pos_len = &(*position) - firts_elem;
@@ -456,6 +461,33 @@ namespace ft
 				return (iterator(p_first));
 			}
 
+			void clear()
+			{
+				size_type size = this->size();
+				for (size_type i = 0; i < size; i++)
+				{
+					last_elem--;
+					alloc.destroy(last_elem);
+				}
+			}
+		
+			/*************************************
+
+						Allocator
+
+			**************************************/
+
+			allocator_type get_allocator() const
+			{
+				return(this->alloc);
+			}
+
+			/*************************************
+
+				Non-member function overloads
+
+			**************************************/
+
 			void swap(vector& x)
 			{	
 				pointer save_start = x.firts_elem;
@@ -474,15 +506,62 @@ namespace ft
 				this->alloc = save_alloc;	
 			}
 
-			void clear()
+			bool operator==(const vector& x)
 			{
-				size_type size = this->size();
-				for (size_type i = 0; i < size; i++)
+				if (this->size() != x.size())
+					return(false);
+				const_iterator new_other_begin = x.begin();
+				const_iterator new_other_end = x.end();
+				iterator new_this_begin = this->begin();
+				while(new_this_begin != this->end())
 				{
-					last_elem--;
-					alloc.destroy(last_elem);
+					if (*new_other_begin == *new_other_end)
+						return(false);
+					*new_other_begin++;
+					*new_this_begin++;
 				}
+				return (true);
 			}
+
+			bool operator!=(const vector& x)
+			{
+				return(!(*this == x));
+			}
+
+			bool operator<(const vector& x)
+			{
+				const_iterator new_other_begin = x.begin();
+				const_iterator new_other_end = x.end();
+				iterator new_this_begin = this->begin();
+				while(new_this_begin != this->end() && *new_other_begin == *new_other_end)
+				{
+					std::cout << "Here!!!!\n" << std::endl;
+					if ( *new_this_begin > *new_other_begin || *new_this_begin < *new_other_begin)
+						break;;
+					*new_other_begin++;
+					*new_this_begin++;
+				}
+				return (*new_this_begin < *new_other_begin);
+			}
+
+			bool operator >(const vector& x)
+			{
+				return(*this < x);
+			}
+
+			bool operator<=(const vector& x)
+			{
+
+				const_iterator new_other_begin = x.begin();
+				iterator new_this_begin = this->begin();
+				return (*new_this_begin <= *new_other_begin);
+			}
+
+			bool operator>=(const vector& x)
+			{
+				return(*this <= x);	
+			}
+
 		private:
 
 			allocator_type	alloc;
@@ -491,7 +570,6 @@ namespace ft
 			pointer			allocated_size;
 
 	};
-	
 }
 
 #endif

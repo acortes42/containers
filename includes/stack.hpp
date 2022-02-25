@@ -26,6 +26,13 @@ namespace ft
 			container_type	ctnr;
 	};
 	
+
+	/*************************************
+
+				Relational operators
+
+	**************************************/
+
 	template <class T, class Container>
   	bool operator== (const stack<T,Container>& lhs, const stack<T,Container>& rhs)
 	{

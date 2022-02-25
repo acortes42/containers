@@ -24,12 +24,15 @@ DIR_OBJS	=	./compiled_objs/
 
 SRCS			=	srcs/map.cpp \
 					srcs/stack.cpp \
-					srcs/vector.cpp \
-					srcs/main.cpp
+					srcs/vector.cpp
+
+MAIN			=	srcs/main.cpp
+
+TEST_MAIN		= 	srcs/test_main.cpp
 
 # COMPILED_SOURCES #
 
-OBJS 		=	${SRCS: .c =.o}
+OBJS 				=	${SRCS: .c =.o}
 
 NAME 		=	containers
 
@@ -44,10 +47,10 @@ all:			$(NAME)
 
 $(NAME):		$(OBJS) includes/containers.hpp
 		@mkdir -p ${DIR_OBJS}
-		@${CC} ${CFLAGS} -c ${SRCS}
+		@${CC} ${CFLAGS} -c ${SRCS} ${MAIN}
 		@mv -f *.o ${DIR_OBJS}
 		@$(RM) *.o
-		@$(CC) $(CC_FLAGS) $(SRCS) -o ${NAME}
+		@$(CC) $(CC_FLAGS) $(SRCS) ${MAIN} -o ${NAME}
 
 # OBLIGATORY PART #
 
@@ -65,9 +68,16 @@ re:				fclean all
 
 debug: 			$(OBJS) includes/containers.hpp
 		@mkdir -p ${DIR_OBJS}
-		@${CC} ${CFLAGS} -g -c ${SRCS}
+		@${CC} ${CFLAGS} -g -c ${SRCS} ${MAIN}
 		@mv *.o compiled_objs
-		@$(CC) $(CC_FLAGS) $(SRCS) -o ${NAME}
+		@$(CC) $(CC_FLAGS) $(SRCS) ${MAIN} -o ${NAME}
+
+test:	$(OBJS) includes/containers.hpp
+		@mkdir -p ${DIR_OBJS}
+		@${CC} ${CFLAGS} -c ${SRCS} ${MAIN}
+		@mv -f *.o ${DIR_OBJS}
+		@$(RM) *.o
+		@$(CC) $(CC_FLAGS) $(SRCS) ${TEST_MAIN} -o ${NAME}
 
 # PHONY #
 

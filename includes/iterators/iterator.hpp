@@ -122,16 +122,16 @@ namespace ft
                 _iter = elem;
             }
 
-            random_access_iterator(const random_access_iterator& op)                
+            random_access_iterator(const random_access_iterator& it)                
             {
-                _iter = op._iter;
+                _iter = it._iter;
             }
 
-            random_access_iterator &operator=(const random_access_iterator& op)
+            random_access_iterator &operator=(const random_access_iterator& it)
             {
-                if (this == &op)
+                if (this == &it)
                     return (*this);
-                this->_iter = op._iter;
+                this->_iter = it._iter;
                 return (*this);
             }
 

@@ -53,7 +53,11 @@ namespace ft
 				};
 			};
 
-			//constructors
+			/*************************************
+
+						Constructors
+
+			**************************************/
 
 			explicit map (const key_compare& comp = key_compare(),
             const allocator_type& alloc = allocator_type())
@@ -80,8 +84,6 @@ namespace ft
 				this->comparation = x.comparation;
 			}
 
-			// DESTRUCTOR a revisar
-
 			~map()
 			{
 				this->clear();
@@ -97,7 +99,12 @@ namespace ft
 				this->comparation = x.comparation;
 			}
 			
-			// Right to the left, or right and right to the left...right?
+
+			/*************************************
+
+						Iterators
+
+			**************************************/
 
 			iterator begin()
 			{
@@ -139,7 +146,12 @@ namespace ft
 				return(const_reverse_iterator(this->tree._last_node, this->tree._last_node->left));
 			}
 
-			// capacity
+			
+			/*************************************
+
+						Capacity
+
+			**************************************/
 
 			bool empty() const
 			{
@@ -169,7 +181,12 @@ namespace ft
 				return((*new_iter).second);
 			}
 
-			//modifiers
+			
+			/*************************************
+
+						Modifiers
+
+			**************************************/
 			
 			std::pair<iterator,bool> insert (const value_type& val)
 			{
@@ -227,7 +244,12 @@ namespace ft
 				this->erase(this->begin(), this->end());
 			}
 
-			//	Observers
+			
+			/*************************************
+
+						Observers
+
+			**************************************/
 
 			key_compare key_comp() const
 			{
@@ -239,7 +261,12 @@ namespace ft
 				return(value_compare(key_comp()));
 			}
 
-			//	Operations
+			
+			/*************************************
+
+						Operations
+
+			**************************************/
 
 			iterator find (const key_type& k)
 			{
@@ -307,40 +334,23 @@ namespace ft
 				return(std::make_pair(iterator(lower_bound(k)), iterator(upper_bound(k))));
 			}
 
-			// Allocator
+			/*************************************
+
+						Allocator
+
+			**************************************/
 
 			allocator_type get_allocator() const
 			{
 				return(this->allocated);
 			}
 
-
-			// overloads
-
-			bool operator ==(const map& e1)
-			{
-				return (*this == e1);
-			}
-
-			bool operator <(const map& e1)
-			{
-				return (*this < e1);
-			}
-
-			bool operator >(const map& e1)
-			{
-				return (*this > e1);
-			}
-
 		private:
-
-			// Of all this values, tree is the only one that is used properly. 
 
 			Compare			comparation;
 			allocator_type	allocated;
 			BTree			tree;
 	};
-
 }
 
 #endif

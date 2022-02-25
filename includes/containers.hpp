@@ -17,6 +17,7 @@
 #include "stack.hpp"
 #include "vector.hpp"
 #include <stdexcept>      // std::length_error
+#include <cassert>
 
 # define ANSI_COLOR_RED     		"\x1b[31m"
 # define ANSI_COLOR_GREEN   		"\x1b[32m"

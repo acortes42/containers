@@ -58,58 +58,6 @@ namespace ft
 			{
 				return (this->pair != x.pair);
 			}
-
-			value_type	get_pair()	
-			{
-				return(pair);
-			}
-
-			bool Exist()
-			{
-				if (this->pair.first)
-					return (1);
-				return (0);
-			}
-		
-			bool HasParent()
-			{
-				if (this != u_nullptr && this->parent != u_nullptr)
-					return 1;
-				return 0;
-			}
-
-			bool HasLeftChild()
-			{
-					if (this != u_nullptr && this->left != u_nullptr)
-						return 1;
-					return 0;
-			}
-
-			bool HasRightChild()
-			{
-				if (this != u_nullptr && this->right != u_nullptr)
-					return 1;
-				return 0;
-			}
-
-			bool IsLeftChild()
-			{
-				if (this != u_nullptr && this->parent != u_nullptr && this == this->parent->left)
-					return 1;
-				return 0;
-			}
-
-			bool IsRightChild()
-			{
-				if (this != u_nullptr && this->parent != u_nullptr && this == this->parent->right)
-					return 1;
-				return 0;
-			}
-
-			T&	Retrieve()
-			{
-				return (this->pair);
-			}
 	};
 
 	template <typename T, class Compare >
@@ -138,30 +86,30 @@ namespace ft
 				_comp(comp)
 			{}
 
-			MapIterator(const MapIterator& bst_it)
+			MapIterator(const MapIterator& it)
 			:
-				_node(bst_it._node),
-				_last_node(bst_it._last_node),
+				_node(it._node),
+				_last_node(it._last_node),
 				_comp()
 			{}
 
 			virtual ~MapIterator() { }
 
-			MapIterator &operator=(const MapIterator& bst_it)
+			MapIterator &operator=(const MapIterator& it)
 			{
-				if (*this == bst_it)
+				if (*this == it)
 					return (*this);
-				this->_node = bst_it._node;
-				this->_last_node = bst_it._last_node;
-				this->_comp = bst_it._comp;
+				this->_node = it._node;
+				this->_last_node = it._last_node;
+				this->_comp = it._comp;
 				return (*this);
 			}
 
-			bool operator==(const MapIterator& bst_it)
-			{ return (this->_node == bst_it._node); }
+			bool operator==(const MapIterator& it)
+			{ return (this->_node == it._node); }
 
-			bool operator!=(const MapIterator& bst_it)
-			{ return (this->_node != bst_it._node); }
+			bool operator!=(const MapIterator& it)
+			{ return (this->_node != it._node); }
 
 			reference operator*() const
 			{ return (this->_node->pair); }
@@ -171,30 +119,30 @@ namespace ft
 
 			MapIterator& operator++(void)
 			{
-				T* cursor = _node;
+				T* new_node = _node;
 
 				if (_node->right == _last_node)
 				{
-					cursor = _node->parent;
-					while (cursor != _last_node
-						&& _comp(cursor->pair.first, _node->pair.first))
-						cursor = cursor->parent;
-					_node = cursor;
+					new_node = _node->parent;
+					while (new_node != _last_node
+						&& _comp(new_node->pair.first, _node->pair.first))
+						new_node = new_node->parent;
+					_node = new_node;
 				}
-				else if (cursor == _last_node)
+				else if (new_node == _last_node)
 					_node = _last_node->right;
 				else
 				{
-					cursor = _node->right;
-					if (cursor == _last_node->parent
-						&& cursor->right == _last_node)
-						_node = cursor;
+					new_node = _node->right;
+					if (new_node == _last_node->parent
+						&& new_node->right == _last_node)
+						_node = new_node;
 					else
 					{
-						while (cursor->left != _last_node)
-							cursor = cursor->left;
+						while (new_node->left != _last_node)
+							new_node = new_node->left;
 					}
-					_node = cursor;
+					_node = new_node;
 				}
 				return (*this);
 			}
@@ -208,30 +156,30 @@ namespace ft
 
 			MapIterator& operator--(void)
 			{
-				T* cursor = _node;
+				T* new_node = _node;
 
 				if (_node->left == _last_node)
 				{
-					cursor = _node->parent;
-					while (cursor != _last_node
-						&& !_comp(cursor->pair.first, _node->pair.first))
-						cursor = cursor->parent;
-					_node = cursor;
+					new_node = _node->parent;
+					while (new_node != _last_node
+						&& !_comp(new_node->pair.first, _node->pair.first))
+						new_node = new_node->parent;
+					_node = new_node;
 				}
-				else if (cursor == _last_node)
+				else if (new_node == _last_node)
 					_node = _last_node->right;
 				else
 				{
-					cursor = _node->left;
-					if (cursor == _last_node->parent
-						&& cursor->left == _last_node)
-						_node = cursor;
+					new_node = _node->left;
+					if (new_node == _last_node->parent
+						&& new_node->left == _last_node)
+						_node = new_node;
 					else
 					{
-						while (cursor->right != _last_node)
-							cursor = cursor->right;
+						while (new_node->right != _last_node)
+							new_node = new_node->right;
 					}
-					_node = cursor;
+					_node = new_node;
 				}
 				return (*this);
 			}
@@ -274,30 +222,30 @@ namespace ft
 					_comp(comp)
 				{}
 
-				ReverseMapIterator(const ReverseMapIterator& bst_it)
+				ReverseMapIterator(const ReverseMapIterator& it)
 				:
-					_node(bst_it._node),
-					_last_node(bst_it._last_node),
+					_node(it._node),
+					_last_node(it._last_node),
 					_comp()
 				{}
 
 				virtual ~ReverseMapIterator() { }
 
-				ReverseMapIterator &operator=(const ReverseMapIterator& bst_it)
+				ReverseMapIterator &operator=(const ReverseMapIterator& it)
 				{
-					if (*this == bst_it)
+					if (*this == it)
 						return (*this);
-					this->_node = bst_it._node;
-					this->_last_node = bst_it._last_node;
-					this->_comp = bst_it._comp;
+					this->_node = it._node;
+					this->_last_node = it._last_node;
+					this->_comp = it._comp;
 					return (*this);
 				}
 
-				bool operator==(const ReverseMapIterator& bst_it)
-				{ return (this->_node == bst_it._node); }
+				bool operator==(const ReverseMapIterator& it)
+				{ return (this->_node == it._node); }
 
-				bool operator!=(const ReverseMapIterator& bst_it)
-				{ return (this->_node != bst_it._node); }
+				bool operator!=(const ReverseMapIterator& it)
+				{ return (this->_node != it._node); }
 
 				reference operator*() const
 				{ return (this->_node->pair); }
@@ -307,30 +255,30 @@ namespace ft
 
 				ReverseMapIterator& operator--(void)
 				{
-					T* cursor = _node;
+					T* new_node = _node;
 
 					if (_node->right == _last_node)
 					{
-						cursor = _node->parent;
-						while (cursor != _last_node
-							&& _comp(cursor->pair.first, _node->pair.first))
-							cursor = cursor->parent;
-						_node = cursor;
+						new_node = _node->parent;
+						while (new_node != _last_node
+							&& _comp(new_node->pair.first, _node->pair.first))
+							new_node = new_node->parent;
+						_node = new_node;
 					}
-					else if (cursor == _last_node)
+					else if (new_node == _last_node)
 						_node = _last_node->right;
 					else
 					{
-						cursor = _node->right;
-						if (cursor == _last_node->parent
-							&& cursor->right == _last_node)
-							_node = cursor;
+						new_node = _node->right;
+						if (new_node == _last_node->parent
+							&& new_node->right == _last_node)
+							_node = new_node;
 						else
 						{
-							while (cursor->left != _last_node)
-								cursor = cursor->left;
+							while (new_node->left != _last_node)
+								new_node = new_node->left;
 						}
-						_node = cursor;
+						_node = new_node;
 					}
 					return (*this);
 				}
@@ -344,30 +292,30 @@ namespace ft
 
 				ReverseMapIterator& operator++(void)
 				{
-					T* cursor = _node;
+					T* new_node = _node;
 
 					if (_node->left == _last_node)
 					{
-						cursor = _node->parent;
-						while (cursor != _last_node
-							&& !_comp(cursor->pair.first, _node->pair.first))
-							cursor = cursor->parent;
-						_node = cursor;
+						new_node = _node->parent;
+						while (new_node != _last_node
+							&& !_comp(new_node->pair.first, _node->pair.first))
+							new_node = new_node->parent;
+						_node = new_node;
 					}
-					else if (cursor == _last_node)
+					else if (new_node == _last_node)
 						_node = _last_node->right;
 					else
 					{
-						cursor = _node->left;
-						if (cursor == _last_node->parent
-							&& cursor->left == _last_node)
-							_node = cursor;
+						new_node = _node->left;
+						if (new_node == _last_node->parent
+							&& new_node->left == _last_node)
+							_node = new_node;
 						else
 						{
-							while (cursor->right != _last_node)
-								cursor = cursor->right;
+							while (new_node->right != _last_node)
+								new_node = new_node->right;
 						}
-						_node = cursor;
+						_node = new_node;
 					}
 					return (*this);
 				}
