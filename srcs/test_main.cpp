@@ -257,23 +257,23 @@ int main()
 	ft::map<int,int> mymap;
 	std::map<int,int> mymap2;
 	
-	mymap.insert(std::make_pair(982, 20));
+	mymap.insert(ft::make_pair(982, 20));
 	mymap2.insert(std::make_pair(982, 20));
 	std::cout << "----------------------------------" << std::endl;
 
-	mymap.insert(std::make_pair(6, 100));
+	mymap.insert(ft::make_pair(6, 100));
 	mymap2.insert(std::make_pair(6, 100));
 	std::cout << "----------------------------------" << std::endl;
 	
-	mymap.insert(std::make_pair(4, 600));
+	mymap.insert(ft::make_pair(4, 600));
 	mymap2.insert(std::make_pair(4, 600));
 		std::cout << "----------------------------------" << std::endl;
 	
-	mymap.insert(std::make_pair(100, 600));
+	mymap.insert(ft::make_pair(100, 600));
 	mymap2.insert(std::make_pair(100, 600));
 		std::cout << "----------------------------------" << std::endl;
 
-	mymap.insert(std::make_pair(100, 600));
+	mymap.insert(ft::make_pair(100, 600));
 	mymap2.insert(std::make_pair(100, 600));
 		std::cout << "----------------------------------" << std::endl;
 	
@@ -290,19 +290,19 @@ int main()
 
 	 std::cout << "----------------------------------" << std::endl;
 
-	mymap.insert(std::make_pair(43, 123));
+	mymap.insert(ft::make_pair(43, 123));
 	mymap2.insert(std::make_pair(43, 123));
 
-	mymap.insert(std::make_pair(23, 1232));
+	mymap.insert(ft::make_pair(23, 1232));
 	mymap2.insert(std::make_pair(23, 1232));
 
-	mymap.insert(std::make_pair(4, 12));
+	mymap.insert(ft::make_pair(4, 12));
 	mymap2.insert(std::make_pair(100, 12));
 
-	mymap.insert(std::make_pair(3, 12));
+	mymap.insert(ft::make_pair(3, 12));
 	mymap2.insert(std::make_pair(3, 12));
 
-	mymap.insert(std::make_pair(2, 12));
+	mymap.insert(ft::make_pair(2, 12));
 	mymap2.insert(std::make_pair(2, 12));
 
 
@@ -344,7 +344,7 @@ int main()
 	checker(mymap.upper_bound(32)->first == mymap2.upper_bound(32)->first, "Map upper_bound");
 	checker(mymap.lower_bound(32)->first == mymap2.lower_bound(32)->first, "Map lower_bound");
 
-	std::pair<ft::map<int,int>::iterator,ft::map<int,int>::iterator> ret;
+	ft::pair<ft::map<int,int>::iterator,ft::map<int,int>::iterator> ret;
   	std::pair<std::map<int,int>::iterator,std::map<int,int>::iterator> ret2;
 
 	ret = mymap.equal_range(32);
@@ -355,12 +355,12 @@ int main()
 
 	// (Exemple copied from cplusplus ) Allocate an array of 5 elements using mymap's allocator:
 
-	std::pair<const int,int>* p;
+	ft::pair<const int,int>* p;
 	std::pair<const int,int>* p2;
 
 	p= mymap.get_allocator().allocate(5);
 	p2= mymap2.get_allocator().allocate(5);
-
+	
 	int psize = sizeof(ft::map<int,int>::value_type)*5;
 	int psize2 = sizeof(std::map<int,int>::value_type)*5;
 
@@ -368,7 +368,7 @@ int main()
 	std::cout << "The allocated array has a size of " << psize2 << " bytes.\n";
 
 	mymap.get_allocator().deallocate(p,5);
-	mymap.get_allocator().deallocate(p2,5);
+	mymap2.get_allocator().deallocate(p2,5);
 	checker(psize == psize2, "Map get_allocator");
 	std::cout << "----------End of main----------" << std::endl;
 
@@ -376,10 +376,10 @@ int main()
 	std::map<int, int>	what;
 
 	what.insert(std::make_pair(7.6f, 7));
-	susy.insert(std::make_pair(7.6f, 7));
-	susy.insert(std::make_pair(8, 9));
-	susy.insert(std::make_pair(9, 7));
-	susy.insert(std::make_pair(7, 3));
+	susy.insert(ft::make_pair(7.6f, 7));
+	susy.insert(ft::make_pair(8, 9));
+	susy.insert(ft::make_pair(9, 7));
+	susy.insert(ft::make_pair(7, 3));
 
 	std::cout << "WTF: " << (susy.find(10) == susy.end()) << std::endl;
 	ft::map<int, int>::iterator susy_i = susy.begin();
@@ -390,6 +390,6 @@ int main()
 		std::cerr << "No me fío" << std::endl;
 		susy.erase(susy_i);
 	}
-	
+
 	return(0);
 }

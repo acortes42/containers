@@ -31,7 +31,7 @@ class Binary_tree
 				_node_alloc.deallocate(_last_node, 1);	
 			}
 		
-			std::pair<iterator, bool> insertPair(value_type to_insert)
+			ft::pair<iterator, bool> insertPair(value_type to_insert)
 			{
 				Node * new_node = _node_alloc.allocate(1);
 				Node * prev_node = _last_node;
@@ -44,7 +44,7 @@ class Binary_tree
 				{
 					int curkey = start_node->pair.first;
 					if (curkey == to_insert.first)
-						return (std::make_pair(iterator(start_node, _last_node), false));
+						return (ft::make_pair(iterator(start_node, _last_node), false));
 					prev_node = start_node;
 					if (to_insert.first > curkey)
 					{
@@ -69,7 +69,7 @@ class Binary_tree
 				_last_node->left = _BST_get_lower_node(_last_node->parent);
 				_last_node->right = _BST_get_higher_node(_last_node->parent);
 				_last_node->pair.first += 1;
-				return (std::make_pair(iterator(new_node, _last_node), true));
+				return (ft::make_pair(iterator(new_node, _last_node), true));
 			}
 
 			void removeByKey(value_type to_remove)

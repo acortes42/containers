@@ -65,44 +65,40 @@ namespace ft
         typedef T1 first_type;
         typedef T2 second_type;
 
-         private:
+         public:
 
             first_type first;
             second_type second;
 
-        public:
-
         	pair()
-            {
-                first();
-				second();
-            };
+            :
+                first(),
+				second()
+            {};
 
-            template<class U, class V> pair (const pair<U,V>& pr)
+            template<class Key, class Value> pair (const pair<Key,Value>& other)
             {
-                this->first = pr.first;
-                this->second = pr.second;
+                this->first = other.first;
+                this->second = other.second;
             };
 
             pair (const first_type& a, const second_type& b)
-            {
-                first(a);
-                second(b);
-            }
+            :
+                first(a),
+                second(b)
+            {};
 
-            pair& operator= (const pair& pr)
+            pair& operator= (const pair& other)
             {
-                if (*this == pr)
-                    return(*this);
-                this->first = pr.first;
-                this->second = pr.second;
+                this->first = other.first;
+                this->second = other.second;
                 return(*this);
             }
 	};
 	
 	template <class T1, class T2> pair<T1,T2> make_pair (T1 x, T2 y)
     {
-        return ( pair<T1,T2>(x,y) );
+        return ( ft::pair<T1,T2>(x,y) );
     };
 }
 #endif

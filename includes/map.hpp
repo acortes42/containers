@@ -6,14 +6,14 @@
 
 namespace ft
 {
-	template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<std::pair<const Key, T> > > 
+	template< class Key, class T, class Compare = std::less<Key>, class Allocator = std::allocator<ft::pair<const Key, T> > > 
 	class map
 	{
 		public:
 
 			typedef	Key	key_type;	
 			typedef	T	mapped_type;
-			typedef std::pair<Key, T>	value_type;
+			typedef ft::pair<Key, T>	value_type;
 			typedef size_t	size_type;
 			typedef	std::ptrdiff_t	difference_type;
 			typedef	Compare	key_compare;
@@ -75,7 +75,7 @@ namespace ft
 				comparation(comp), 
 				allocated(alloc)
 			{
-				tree->insert(std::make_pair(iterator(first, last), true));
+				tree->insert(ft::make_pair(iterator(first, last), true));
 			}
 
 			map (const map& x)
@@ -178,7 +178,7 @@ namespace ft
 				const_iterator new_iter = this->find(k);
 
 				if (new_iter == this->const_end())
-					this->insert(std::make_pair(k, mapped_type()));
+					this->insert(ft::make_pair(k, mapped_type()));
 				return((*new_iter).second);
 			}
 
@@ -189,7 +189,7 @@ namespace ft
 
 			**************************************/
 			
-			std::pair<iterator,bool> insert (const value_type& val)
+			ft::pair<iterator,bool> insert (const value_type& val)
 			{
 				return(this->tree.insertPair(val));
 			};
@@ -222,7 +222,7 @@ namespace ft
 
 				if (new_iter == this->end())
 					return(0);
-				this->tree.removeByKey(std::make_pair(k, mapped_type()));
+				this->tree.removeByKey(ft::make_pair(k, mapped_type()));
 				return(1);
 			}
 
@@ -273,12 +273,12 @@ namespace ft
 
 			iterator find (const key_type& k)
 			{
-				return(iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->tree._last_node));
+				return(iterator(this->tree.searchByKey(ft::make_pair(k, mapped_type())), this->tree._last_node));
 			}
 
 			const_iterator find (const key_type& k) const
 			{
-				return(const_iterator(this->tree.searchByKey(std::make_pair(k, mapped_type())), this->tree._last_node));
+				return(const_iterator(this->tree.searchByKey(ft::make_pair(k, mapped_type())), this->tree._last_node));
 			}
 
 			size_type count (const key_type& k) const
@@ -327,14 +327,14 @@ namespace ft
 				return(const_iterator(this->upper_bound(k)));
 			}
 
-			std::pair<const_iterator,const_iterator> equal_range (const key_type& k) const
+			ft::pair<const_iterator,const_iterator> equal_range (const key_type& k) const
 			{
-				return(std::make_pair(const_iterator(lower_bound(k)), const_iterator(upper_bound(k))));
+				return(ft::make_pair(const_iterator(lower_bound(k)), const_iterator(upper_bound(k))));
 			}
 			
-			std::pair<iterator,iterator> equal_range (const key_type& k)
+			ft::pair<iterator,iterator> equal_range (const key_type& k)
 			{
-				return(std::make_pair(iterator(lower_bound(k)), iterator(upper_bound(k))));
+				return(ft::make_pair(iterator(lower_bound(k)), iterator(upper_bound(k))));
 			}
 
 			/*************************************
