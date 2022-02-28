@@ -9,10 +9,11 @@ namespace ft
     // std::is_integral
 
     template <bool is_integral, typename T>
-        struct is_integral_res {
-            typedef T type;
-            static const bool value = is_integral;
-            };
+    struct is_integral_res 
+    {
+        typedef T type;
+        static const bool value = is_integral;
+    };
 
     template <typename> struct is_integral_type : public is_integral_res<false, bool> {};
     template <> struct is_integral_type<bool> : public is_integral_res<true, bool> {};

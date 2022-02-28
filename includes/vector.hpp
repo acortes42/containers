@@ -56,7 +56,9 @@ namespace ft
 				}
 			}
 
-         	vector (iterator first, iterator last, const allocator_type& alloc2 = allocator_type())
+         	template <class InputIterator>
+         	vector (InputIterator first, InputIterator last, const allocator_type& alloc2 = allocator_type(),
+			 typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = u_nullptr)
 			:
 			 	alloc(alloc2),
 				firts_elem(u_nullptr),
@@ -269,7 +271,9 @@ namespace ft
 				}
 			}
 
-  			void assign (iterator first, iterator last)
+  			template <class InputIterator>
+  			void assign (InputIterator first, InputIterator last,
+			  typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = u_nullptr)
 			{
 				this->clear();
 				size_type i = 0;
@@ -381,7 +385,9 @@ namespace ft
 				allocated_size = newcapacity;
 			}
 
-    		void insert (iterator position, iterator first, iterator last)
+    		template <class InputIterator>
+    		void insert (iterator position, InputIterator first, InputIterator last,
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = u_nullptr)
 			{
 				size_type pos_len = &(*position) - firts_elem;
 				pointer newfirts_elem = pointer();

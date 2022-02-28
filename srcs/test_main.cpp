@@ -71,23 +71,8 @@ int main()
 	checker(second.size() == real.size(), "Vector size() after resize");
 	checker(*second.begin() == *real.begin(), "Vector begin() after resize");
 	checker(*second.rbegin() == *real.rbegin(), "Vector rbegin() after resize");
-	checker(*second.end() == *real.end(), "Vector end() after resize");
-	std::cout << "rend -->" << *(second.rend() - 1) << " ----- " << *(real.rend() - 1) << std::endl;
 	checker(*(second.rend() - 1) == *(real.rend() - 1), "Vector rend() after resize");
 
-	// ft::vector<int>	first(second.begin() + 2, second.begin(), second.end());
-/*
-	ft::vector<int>::iterator it = second.begin();
-	std::vector<int>::iterator real_it = real.begin();
-
-	std::cout << "----  Check begin() and end()  ----- \n" << std::endl;
-	while(it != second.end())
-	{
-		std::cout << ANSI_COLOR_CYAN<< *it << "  ==  " << *real_it << std::endl;
-		it++;
-		real_it++;
-	}
-*/
 	checker(second.at(4) == real.at(4), "Vector at()");
 	checker(second[2]  == real[2] , "vector []");
 
@@ -169,19 +154,6 @@ int main()
 
 	vect_it2 = second.begin();
 	vect_new_it2 = real.begin();
-	
-	/*
-		ft::vector<int>::iterator it = second.begin();
-		std::vector<int>::iterator real_it = real.begin();
-
-		std::cout << "----  Check begin() and end()  ----- \n" << std::endl;
-		while(it != second.end())
-		{
-			std::cout << ANSI_COLOR_CYAN<< *it << "  ==  " << *real_it << std::endl;
-			it++;
-			real_it++;
-		}
-	*/
 
 	second.erase (vect_it2, second.end());
 	real.erase (vect_new_it2, real.end());
@@ -284,7 +256,6 @@ int main()
 
 	ft::map<int,int> mymap;
 	std::map<int,int> mymap2;
-	//mymap.find('c');
 	
 	mymap.insert(std::make_pair(982, 20));
 	mymap2.insert(std::make_pair(982, 20));
@@ -312,14 +283,9 @@ int main()
 	checker(mymap[4] == mymap2[4], "Map[4]");
 	checker(mymap[12] == mymap2[12], "Map[12]: without key 12");
 
-	//checker(mymap.erase(6) == mymap2.erase(6), "Map: erase a value from key");
-	//mymap.erase(6);
-	//mymap2.erase(6);
-
 	ft::map<int,int>::iterator new_it = mymap.find(5);
 	std::map<int,int>::iterator new_it2 = mymap2.find(5);
 
-	// std::cout << "results of find: "<< (*(new_it)).first << " ----- "<< (*(new_it2)).first <<std::endl;
 	checker((*(new_it)).first == (*(new_it2)).first, "Comparing the return value of find(5)");
 
 	 std::cout << "----------------------------------" << std::endl;
@@ -372,11 +338,6 @@ int main()
 
 	ft::map<char,int>::iterator itlow,itup;
 
-	//itlow=mymap.lower_bound ('b');  // itlow points to b
-  	//itup=mymap.upper_bound ('d');   // itup points to e (not d!)
-
-	
-
 	std::cout << "Upper_bound of 9  in std  " << mymap2.upper_bound(9)->first  <<  std::endl;
 	std::cout << "Upper_bound of 9  in ft  " << mymap.upper_bound(9)->first  << std::endl;
 
@@ -410,5 +371,25 @@ int main()
 	mymap.get_allocator().deallocate(p2,5);
 	checker(psize == psize2, "Map get_allocator");
 	std::cout << "----------End of main----------" << std::endl;
+
+	ft::map<int, int>	susy;
+	std::map<int, int>	what;
+
+	what.insert(std::make_pair(7.6f, 7));
+	susy.insert(std::make_pair(7.6f, 7));
+	susy.insert(std::make_pair(8, 9));
+	susy.insert(std::make_pair(9, 7));
+	susy.insert(std::make_pair(7, 3));
+
+	std::cout << "WTF: " << (susy.find(10) == susy.end()) << std::endl;
+	ft::map<int, int>::iterator susy_i = susy.begin();
+	ft::map<int, int>::iterator	susy_last = susy.end();
+
+	for ( ; susy_i != susy_last; ++susy_i)
+	{
+		std::cerr << "No me fío" << std::endl;
+		susy.erase(susy_i);
+	}
+	
 	return(0);
 }

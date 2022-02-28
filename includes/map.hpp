@@ -67,8 +67,9 @@ namespace ft
 				tree()
 			{}
 
-			template <class InputIterator>  map (InputIterator first, InputIterator last,
-				const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type())
+			template <class InputIterator>
+			map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type(), 
+				typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = u_nullptr)
 			:
 				tree(),
 				comparation(comp), 
@@ -199,7 +200,9 @@ namespace ft
 				return(this->tree.insertPair(val).first);
 			}
 
-			void insert (iterator first, iterator last)
+			template <class InputIterator>
+  			void insert (InputIterator first, InputIterator last,
+			  typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* = u_nullptr)
 			{
 				while(first != last)
 				{
